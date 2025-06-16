@@ -7,66 +7,70 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pacifico&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'VT323', monospace;
-            background: linear-gradient(135deg, #ff7eb9, #ffb380, #ffeb80, #b3ff80, #80b3ff, #c280ff, #ff80c2);
-            background-size: 600% 600%;
-            animation: gradientAnimation 15s ease infinite;
-            color: #fff;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+            font-family: 'Press Start 2P', cursive;
+            background: linear-gradient(270deg, #ffdde1, #ee9ca7, #adcbe3, #e1e9f1);
+            background-size: 400% 400%;
+            animation: auroraAnimation 20s ease infinite;
+            color: #ffffff;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.5);
+            overflow-x: hidden;
         }
-
-        @keyframes gradientAnimation {
+        
+        @keyframes auroraAnimation {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
-        .y2k-title {
+        .mario-title {
             font-family: 'Press Start 2P', cursive;
             font-size: 2.5rem;
-            text-shadow: 3px 3px 0px #e03f9a, 6px 6px 0px #9b2869;
+            color: #fbd000; /* Mario Yellow */
+            text-shadow: 3px 3px 0px #e70000, 6px 6px 0px #000; /* Red and Black shadow */
             transform: rotate(-2deg);
+            display: inline-block;
+        }
+        
+        .mario-title span {
+            display: inline-block;
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
         }
 
-        .y2k-button {
+        .mario-button {
             font-family: 'Press Start 2P', cursive;
-            background-color: #ff7eb9;
+            background-color: #e70000; /* Mario Red */
             color: white;
-            border: 4px solid #9b2869;
-            box-shadow: 5px 5px 0px #9b2869;
-            transition: all 0.2s ease-in-out;
-            transform: scale(1.05);
+            border: 4px solid #ffffff;
+            box-shadow: 0 6px #a50000; /* Darker red shadow */
+            transition: all 0.1s ease-in-out;
             cursor: pointer;
         }
 
-        .y2k-button:hover {
-            background-color: #ff94c7;
-            box-shadow: 2px 2px 0px #9b2869;
-            transform: translate(3px, 3px) scale(1.05);
+        .mario-button:hover {
+            background-color: #ff3333;
         }
         
-        .y2k-button:active, .filter-btn.active {
-            background-color: #e03f9a;
-            box-shadow: 1px 1px 0px #9b2869;
-            transform: translate(4px, 4px) scale(1.05);
+        .mario-button:active, .filter-btn.active {
+            box-shadow: 0 2px #a50000;
+            transform: translateY(4px);
         }
         
-        .y2k-button:disabled {
+        .mario-button:disabled {
             background-color: #a0a0a0;
-            box-shadow: 5px 5px 0px #6b6b6b;
-            border-color: #6b6b6b;
+            box-shadow: 0 6px #6b6b6b;
+            border-color: #d1d1d1;
             cursor: not-allowed;
             opacity: 0.7;
         }
         
         .video-container {
-            border: 8px solid #fff;
-            border-image: linear-gradient(45deg, #f87171, #fb923c, #facc15, #a3e635, #60a5fa, #c084fc) 1;
+            border: 10px solid #42b842; /* Mario Pipe Green */
+            border-radius: 15px;
             box-shadow: 0 0 25px rgba(255, 255, 255, 0.5), inset 0 0 15px rgba(0,0,0,0.3);
-            background-color: #1a1a1a;
+            background-color: #000;
         }
 
         .photostrip {
@@ -77,18 +81,31 @@
             padding: 8px;
         }
         
+        .photostrip-img-container {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            overflow: hidden;
+            background-color: #333;
+        }
+
         .photostrip-img {
             width: 100%;
-            height: auto;
-            object-fit: cover;
+            height: 100%;
+            object-fit: cover; /* This is key to prevent stretching */
             transition: filter 0.3s ease;
+        }
+
+        .strip-logo {
+            font-family: 'Pacifico', cursive;
+            font-size: 24px;
+            text-shadow: 2px 2px 2px rgba(0,0,0,0.5);
         }
 
         #countdown {
             font-family: 'Press Start 2P', cursive;
             font-size: 15vw;
-            color: #ffeb3b;
-            text-shadow: 5px 5px 0px #e03f9a, -5px -5px 0px #60a5fa;
+            color: #fbd000;
+            text-shadow: 5px 5px 0px #e70000, -5px -5px 0px #42b842;
             position: absolute;
             top: 50%;
             left: 50%;
@@ -114,103 +131,192 @@
             width: 60px;
             height: 60px;
             border: 4px solid white;
-            border-radius: 50%;
             cursor: pointer;
             transition: transform 0.2s;
+            background-size: cover;
+            border-radius: 0.375rem; /* rounded-md */
         }
         .frame-choice:hover {
-            transform: scale(1.1);
+            transform: scale(1.1) translateY(-5px);
         }
+        
+        input[type="color"] {
+            -webkit-appearance: none;
+            width: 60px;
+            height: 60px;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            background: none;
+        }
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        input[type="color"]::-webkit-color-swatch {
+            border: 4px solid white;
+            border-radius: 0.375rem;
+        }
+
+
+        /* Mario Animation */
+        #mario-animation {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 48px; /* 3 frames * 16px */
+            height: 16px;
+            transform: scale(3);
+            transform-origin: bottom left;
+            animation: move-across 15s linear infinite;
+            z-index: 100;
+            display: none; /* Hidden by default, shown on specific screens */
+        }
+
+        #mario-sprite {
+            width: 100%;
+            height: 100%;
+            background-image: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/194917/mario.png');
+            animation: walk-cycle 0.4s steps(3) infinite;
+        }
+
+        @keyframes walk-cycle {
+            100% { background-position: -48px 0; }
+        }
+
+        @keyframes move-across {
+            from { transform: translateX(-64px) scale(3); }
+            to { transform: translateX(calc(100vw / 3)) scale(3); }
+        }
+        
+        hr.mario-divider {
+            border: none;
+            height: 10px;
+            background: linear-gradient(90deg, transparent, #d95e00, #fbd000, #d95e00, transparent);
+            margin: 2rem 0;
+        }
+        
+        /* Particle & Coin Animations */
+        .particle {
+            position: absolute;
+            background-color: #fbd000;
+            border-radius: 50%;
+            z-index: 50;
+        }
+        .coin {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-image: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/194917/coin.png');
+            background-size: cover;
+            z-index: 50;
+        }
+
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
+<body class="min-h-screen p-4">
     <div id="flash"></div>
-    <div class="w-full max-w-6xl mx-auto text-center">
+    <div class="w-full max-w-6xl mx-auto text-center py-8">
 
         <!-- Initial State -->
         <div id="initial-screen">
-            <h1 class="y2k-title mb-4">Sura Sura</h1>
-            <p class="text-2xl mb-8">Get ready to strike a pose! ✨</p>
-            <button id="start-button" class="y2k-button text-xl px-10 py-5 rounded-xl">Mulai</button>
+            <h1 id="main-title" class="mario-title mb-4">Sura Sura</h1>
+            <p class="text-2xl mb-8">It's-a-me, Photobooth!</p>
+            <button id="start-button" class="mario-button text-xl px-10 py-5 rounded-xl">START</button>
             <p id="error-msg" class="mt-4 text-red-300 text-lg"></p>
         </div>
         
         <!-- Session Selection State -->
         <div id="session-selection-screen" class="hidden">
-            <h2 class="text-4xl font-bold mb-8" style="font-family: 'Press Start 2P', cursive;">Pilih Sesi Kamu</h2>
+            <h2 class="text-4xl font-bold mb-8">Pilih Level Kamu</h2>
             <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
-                <button id="one-strip-button" class="y2k-button text-lg px-8 py-4 rounded-xl">1 Strip (4 Foto)</button>
-                <button id="two-strips-button" class="y2k-button text-lg px-8 py-4 rounded-xl">2 Strip (8 Foto)</button>
+                <button id="one-strip-button" class="mario-button text-lg px-8 py-4 rounded-xl">1-UP (4 FOTO)</button>
+                <button id="two-strips-button" class="mario-button text-lg px-8 py-4 rounded-xl">2-UP (8 FOTO)</button>
             </div>
         </div>
 
         <!-- Photobooth State -->
         <div id="photobooth-screen" class="hidden">
-            <div class="relative inline-block video-container rounded-2xl">
-                <video id="video" width="640" height="480" autoplay playsinline class="rounded-lg scale-x-[-1]"></video>
+            <div id="video-wrapper" class="relative inline-block video-container">
+                <video id="video" width="640" height="480" autoplay playsinline class="rounded-sm scale-x-[-1]"></video>
                 <div id="countdown" class="hidden"></div>
-                 <div id="photo-counter" class="absolute bottom-2 right-4 text-4xl font-bold bg-black bg-opacity-50 px-3 py-1 rounded-lg">0/0</div>
+                 <div id="photo-counter" class="absolute bottom-2 right-4 text-4xl font-bold">0/0</div>
             </div>
-            <p id="instruction" class="text-3xl mt-4">Bersiap!</p>
+            <p id="instruction" class="text-3xl mt-4">Get Ready!</p>
         </div>
 
         <!-- Review Photos State -->
         <div id="review-screen" class="hidden">
-            <h2 class="text-4xl font-bold mb-6" style="font-family: 'Press Start 2P', cursive;">Review Fotomu</h2>
+            <h2 class="text-4xl font-bold mb-6">Review Your Power-Ups!</h2>
             <div id="review-gallery" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                 <!-- Photos for review will be generated here -->
             </div>
-            <button id="continue-to-frame-button" class="y2k-button text-lg px-8 py-4 rounded-xl">Lanjutkan!</button>
+            <button id="continue-to-frame-button" class="mario-button text-lg px-8 py-4 rounded-xl">Let's-a-Go!</button>
         </div>
 
 
         <!-- Frame Selection State -->
-        <div id="frame-selection-screen" class="hidden">
-            <h2 class="text-4xl font-bold mb-6" style="font-family: 'Press Start 2P', cursive;">Pilih Frame Favoritmu!</h2>
-            <div class="flex justify-center items-center gap-6">
-                <div class="frame-choice" style="background-color: black;" data-color="black"></div>
-                <div class="frame-choice" style="background-color: white;" data-color="white"></div>
-                <div class="frame-choice" style="background-color: #8D021F;" data-color="#8D021F"></div>
+        <div id="frame-selection-state" class="hidden">
+            <h2 class="text-4xl font-bold mb-6">Pilih Warna Frame</h2>
+            <div id="frame-choices-container" class="relative flex flex-wrap justify-center items-center gap-6">
+                <div class="frame-choice" style="background-color: #F5F5DC;" data-color="#F5F5DC" title="Putih Tulang"></div>
+                <div class="frame-choice" style="background-color: #000000;" data-color="#000000" title="Hitam"></div>
+                <div class="frame-choice" style="background-color: #8F9779;" data-color="#8F9779" title="Sage Green"></div>
+                <div class="frame-choice" style="background-color: #800020;" data-color="#800020" title="Merah Burgundy"></div>
+                <div class="frame-choice" style="background-color: #fbd000;" data-color="#fbd000" title="Kuning Mario"></div>
+                <label for="color-picker" title="Pilih Warnamu">
+                    <div class="frame-choice flex items-center justify-center cursor-pointer" style="background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red)">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path><path d="M12 22.31V12"></path></svg>
+                    </div>
+                </label>
+                <input type="color" id="color-picker" class="hidden">
             </div>
         </div>
 
         <!-- Result State -->
         <div id="result-screen" class="hidden">
-             <h2 class="text-4xl font-bold mb-6" style="font-family: 'Press Start 2P', cursive;">Hasil Karyamu!</h2>
+             <h2 class="text-4xl font-bold mb-6">Here We Go!</h2>
             <div id="result-layout-container" class="flex flex-col items-center justify-center gap-8 w-full">
-                 <!-- Strips Wrapper -->
                 <div id="strips-wrapper" class="flex flex-col md:flex-row justify-center items-start gap-8">
                     <div id="photostrip1-container" class="photostrip w-[180px] md:w-[200px] rounded-lg"></div>
                     <div id="photostrip2-container" class="photostrip w-[180px] md:w-[200px] rounded-lg hidden"></div>
                 </div>
-                 <!-- Actions Wrapper -->
                 <div id="actions-wrapper" class="flex flex-col items-center gap-6 mt-4 md:mt-0 md:pl-8">
                      <div id="filter-selection" class="flex justify-center items-center gap-4">
-                         <button data-filter="none" class="filter-btn y2k-button text-sm px-4 py-2 rounded-lg active">Normal</button>
-                         <button data-filter="vintage" class="filter-btn y2k-button text-sm px-4 py-2 rounded-lg">Vintage</button>
-                         <button data-filter="bw" class="filter-btn y2k-button text-sm px-4 py-2 rounded-lg">B&W</button>
+                         <button data-filter="none" class="filter-btn mario-button text-sm px-4 py-2 rounded-lg active">Normal</button>
+                         <button data-filter="vintage" class="filter-btn mario-button text-sm px-4 py-2 rounded-lg">Retro</button>
+                         <button data-filter="bw" class="filter-btn mario-button text-sm px-4 py-2 rounded-lg">B&W</button>
                     </div>
                     <div class="flex flex-wrap justify-center items-center gap-4">
-                        <button id="retake-button" class="y2k-button text-base px-6 py-3 rounded-lg">Ulangi Sesi</button>
-                        <button id="change-frame-button" class="y2k-button text-base px-6 py-3 rounded-lg">Ganti Frame</button>
-                        <button id="download-strip1-button" class="y2k-button text-base px-6 py-3 rounded-lg">Unduh Strip 1</button>
-                        <button id="download-strip2-button" class="y2k-button text-base px-6 py-3 rounded-lg hidden">Unduh Strip 2</button>
-                        <button id="download-all-button" class="y2k-button text-base px-6 py-3 rounded-lg hidden">Unduh Semua</button>
+                        <button id="download-strip1-button" class="mario-button text-sm px-4 py-2 rounded-lg">Unduh 1</button>
+                        <button id="download-strip2-button" class="mario-button text-sm px-4 py-2 rounded-lg hidden">Unduh 2</button>
+                        <button id="download-all-button" class="mario-button text-sm px-4 py-2 rounded-lg hidden">Unduh Semua</button>
                     </div>
                 </div>
+            </div>
+
+            <hr class="mario-divider">
+            
+            <!-- General Actions -->
+            <div class="flex flex-wrap justify-center items-center gap-4">
+                <button id="retake-button" class="mario-button text-base px-6 py-3 rounded-lg">Ulangi</button>
+                <button id="change-frame-button" class="mario-button text-base px-6 py-3 rounded-lg">Ganti Frame</button>
             </div>
         </div>
     </div>
     
+    <div id="mario-animation">
+        <div id="mario-sprite"></div>
+    </div>
+    
     <canvas id="capture-canvas" class="hidden"></canvas>
-
+    
     <script>
         // DOM Elements
         const initialScreen = document.getElementById('initial-screen');
         const sessionSelectionScreen = document.getElementById('session-selection-screen');
         const photoboothScreen = document.getElementById('photobooth-screen');
         const reviewScreen = document.getElementById('review-screen');
-        const frameSelectionScreen = document.getElementById('frame-selection-screen');
+        const frameSelectionScreen = document.getElementById('frame-selection-state');
         const resultScreen = document.getElementById('result-screen');
         
         const startButton = document.getElementById('start-button');
@@ -223,6 +329,7 @@
         const downloadStrip1Button = document.getElementById('download-strip1-button');
         const downloadStrip2Button = document.getElementById('download-strip2-button');
         const downloadAllButton = document.getElementById('download-all-button');
+        const colorPicker = document.getElementById('color-picker');
         
         const resultLayoutContainer = document.getElementById('result-layout-container');
 
@@ -233,25 +340,28 @@
         const errorMsgEl = document.getElementById('error-msg');
         const flashEl = document.getElementById('flash');
         const captureCanvas = document.getElementById('capture-canvas');
+        const mainTitle = document.getElementById('main-title');
+        const marioAnimation = document.getElementById('mario-animation');
 
         // State
         let stream;
         let capturedPhotos = [];
-        let selectedFrameColor = 'white';
+        let selectedFrameColor = '#F5F5DC'; // Default to bone white
         let currentFilter = 'none';
         let totalPhotosInSession = 0;
-        const PHOTO_WIDTH = 640;
-        const PHOTO_HEIGHT = 480;
+        const PHOTO_WIDTH = 320; 
+        const PHOTO_HEIGHT = 240;
 
         // Audio Context for sounds
         let audioCtx;
+        
         function initAudio() {
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             }
         }
         
-        function playBeep(freq, duration) {
+        function playCoinSound() {
             if (!audioCtx) return;
             const oscillator = audioCtx.createOscillator();
             const gainNode = audioCtx.createGain();
@@ -259,36 +369,92 @@
             gainNode.connect(audioCtx.destination);
             
             oscillator.type = 'sine';
-            oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            oscillator.frequency.setValueAtTime(987.77, audioCtx.currentTime); // B5
             gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration / 1000);
+
+            setTimeout(() => {
+                 oscillator.frequency.setValueAtTime(1318.51, audioCtx.currentTime); // E6
+            }, 50);
+
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
             
             oscillator.start();
-            oscillator.stop(audioCtx.currentTime + duration / 1000);
+            oscillator.stop(audioCtx.currentTime + 0.1);
         }
         
-        function playShutterSound() {
+        function playJumpSound() {
             if (!audioCtx) return;
-            const bufferSize = audioCtx.sampleRate * 0.1;
-            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-            const output = buffer.getChannelData(0);
-
-            for (let i = 0; i < bufferSize; i++) {
-                output[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 2);
-            }
-
-            const source = audioCtx.createBufferSource();
-            source.buffer = buffer;
+            const oscillator = audioCtx.createOscillator();
             const gainNode = audioCtx.createGain();
-            gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
-
-            source.connect(gainNode);
+            oscillator.connect(gainNode);
             gainNode.connect(audioCtx.destination);
-            source.start();
-            source.stop(audioCtx.currentTime + 0.1);
-        }
+            
+            oscillator.type = 'square';
+            oscillator.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+            gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
 
+            oscillator.frequency.exponentialRampToValueAtTime(1046.50, audioCtx.currentTime + 0.15);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+            
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.15);
+        }
+        
+        // --- JS Animations ---
+        function animateTitle() {
+            const text = mainTitle.textContent;
+            mainTitle.textContent = '';
+            text.split('').forEach(char => {
+                const span = document.createElement('span');
+                if (char === ' ') {
+                    span.innerHTML = '&nbsp;';
+                } else {
+                    span.textContent = char;
+                }
+                mainTitle.appendChild(span);
+            });
+
+            Array.from(mainTitle.children).forEach((span, index) => {
+                span.addEventListener('mouseover', () => {
+                     span.style.transform = 'translateY(-10px) rotate(5deg)';
+                     playCoinSound();
+                });
+                 span.addEventListener('mouseout', () => {
+                     span.style.transform = 'translateY(0px) rotate(0deg)';
+                });
+            });
+        }
+        
+        function createParticles(x, y) {
+            const parent = document.getElementById('video-wrapper');
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                parent.appendChild(particle);
+
+                const size = Math.random() * 8 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                const angle = Math.random() * 360;
+                const distance = Math.random() * 80 + 50;
+                
+                const initialX = x;
+                const initialY = y;
+                
+                particle.style.left = `${initialX}px`;
+                particle.style.top = `${initialY}px`;
+                
+                setTimeout(() => {
+                    particle.style.transition = 'all 0.5s ease-out';
+                    particle.style.transform = `translate(${Math.cos(angle * Math.PI / 180) * distance}px, ${Math.sin(angle * Math.PI / 180) * distance}px) scale(0)`;
+                    particle.style.opacity = '0';
+                }, 10);
+                
+                setTimeout(() => particle.remove(), 600);
+            }
+        }
+        
         // Initialize camera
         async function initCamera() {
              if (stream) return true;
@@ -312,14 +478,32 @@
                 return false;
             }
         }
+        
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+        }
+
+        function showScreen(screen) {
+            [initialScreen, sessionSelectionScreen, photoboothScreen, reviewScreen, frameSelectionScreen, resultScreen].forEach(s => s.classList.add('hidden'));
+            screen.classList.remove('hidden');
+
+            if(screen === initialScreen || screen === sessionSelectionScreen) {
+                 marioAnimation.style.display = 'block';
+            } else {
+                 marioAnimation.style.display = 'none';
+            }
+        }
 
         // Start button leads to session selection
         startButton.addEventListener('click', async () => {
             initAudio(); 
             const cameraReady = await initCamera();
             if (cameraReady) {
-                initialScreen.classList.add('hidden');
-                sessionSelectionScreen.classList.remove('hidden');
+                playCoinSound();
+                showScreen(sessionSelectionScreen);
             }
         });
 
@@ -332,8 +516,8 @@
             totalPhotosInSession = photoCount;
             capturedPhotos = [];
             
-            [sessionSelectionScreen, reviewScreen, resultScreen, frameSelectionScreen].forEach(el => el.classList.add('hidden'));
-            photoboothScreen.classList.remove('hidden');
+            await initCamera(); 
+            showScreen(photoboothScreen);
 
             for (let i = 1; i <= totalPhotosInSession; i++) {
                 photoCounterEl.textContent = `${i-1}/${totalPhotosInSession}`;
@@ -342,7 +526,7 @@
                 capturedPhotos.push(captureSinglePhoto());
                 photoCounterEl.textContent = `${i}/${totalPhotosInSession}`;
             }
-            instructionEl.textContent = "Selesai! Memeriksa fotomu...";
+            instructionEl.textContent = "Great!";
             await delay(1000);
             showReviewScreen();
         }
@@ -356,7 +540,7 @@
                 const interval = setInterval(() => {
                     if (count > 0) {
                         countdownEl.textContent = count;
-                        playBeep(440, 150);
+                        playCoinSound();
                         count--;
                     } else {
                         clearInterval(interval);
@@ -375,8 +559,11 @@
         }
 
         function captureSinglePhoto() {
-            playShutterSound();
+            playJumpSound();
             triggerFlash();
+            const rect = video.getBoundingClientRect();
+            createParticles(rect.width/2, rect.height/2);
+            
             const context = captureCanvas.getContext('2d');
             captureCanvas.width = PHOTO_WIDTH;
             captureCanvas.height = PHOTO_HEIGHT;
@@ -385,14 +572,14 @@
             context.scale(-1, 1);
             context.drawImage(video, 0, 0, PHOTO_WIDTH, PHOTO_HEIGHT);
             const dataUrl = captureCanvas.toDataURL('image/jpeg');
-            context.setTransform(1, 0, 0, 1, 0, 0); // Reset transform
+            context.setTransform(1, 0, 0, 1, 0, 0);
             return dataUrl;
         }
 
         // Review Screen Logic
         function showReviewScreen() {
-            photoboothScreen.classList.add('hidden');
-            reviewScreen.classList.remove('hidden');
+            stopCamera(); // Turn off camera after finishing session
+            showScreen(reviewScreen);
             
             const gallery = document.getElementById('review-gallery');
             gallery.innerHTML = '';
@@ -406,8 +593,8 @@
                 img.className = 'w-full rounded-lg shadow-lg';
                 
                 const retakeBtn = document.createElement('button');
-                retakeBtn.textContent = 'Ulangi Foto';
-                retakeBtn.className = 'absolute bottom-2 left-1/2 -translate-x-1/2 y2k-button text-xs px-3 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity';
+                retakeBtn.textContent = 'Ulangi';
+                retakeBtn.className = 'absolute bottom-2 left-1/2 -translate-x-1/2 mario-button text-xs px-3 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity';
                 retakeBtn.onclick = () => initiateRetake(index);
 
                 photoContainer.appendChild(img);
@@ -417,8 +604,9 @@
         }
         
         async function initiateRetake(index) {
-            reviewScreen.classList.add('hidden');
-            photoboothScreen.classList.remove('hidden');
+            await initCamera(); 
+            showScreen(photoboothScreen);
+
             photoCounterEl.textContent = `${index}/${totalPhotosInSession}`;
             instructionEl.textContent = `Ulangi foto ke-${index + 1}...`;
             
@@ -429,28 +617,33 @@
         }
 
         continueToFrameButton.addEventListener('click', () => {
-            reviewScreen.classList.add('hidden');
-            frameSelectionScreen.classList.remove('hidden');
+            showScreen(frameSelectionScreen);
         });
 
         // Frame selection handler
         document.querySelectorAll('.frame-choice').forEach(choice => {
-            choice.addEventListener('click', () => {
-                selectedFrameColor = choice.dataset.color;
-                frameSelectionScreen.classList.add('hidden');
+            choice.addEventListener('click', (e) => {
+                playCoinSound();
+                selectedFrameColor = e.target.dataset.color;
+                showScreen(resultScreen);
                 generatePhotostripsPreview();
-                resultScreen.classList.remove('hidden');
             });
         });
+        
+        colorPicker.addEventListener('change', (e) => {
+            playCoinSound();
+            selectedFrameColor = e.target.value;
+            showScreen(resultScreen);
+            generatePhotostripsPreview();
+        });
+
 
         // Filter selection logic
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 currentFilter = e.target.dataset.filter;
-                
                 document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
                 e.target.classList.add('active');
-
                 applyPreviewFilter(currentFilter);
             });
         });
@@ -465,6 +658,20 @@
                     img.style.filter = 'none';
                 }
              });
+        }
+        
+        function isColorDark(hex) {
+            const color = (hex.charAt(0) === '#') ? hex.substring(1, 7) : hex;
+            const r = parseInt(color.substring(0, 2), 16);
+            const g = parseInt(color.substring(2, 4), 16);
+            const b = parseInt(color.substring(4, 6), 16);
+            return (((r * 299) + (g * 587) + (b * 114)) / 1000) < 128;
+        }
+
+        function updateLogoColor() {
+            document.querySelectorAll('.strip-logo').forEach(logo => {
+                logo.style.color = isColorDark(selectedFrameColor) ? 'white' : 'black';
+            });
         }
 
         // Generate the photostrips for on-screen preview
@@ -482,14 +689,14 @@
             document.querySelector('.filter-btn[data-filter="none"]').classList.add('active');
 
             const strip1Photos = capturedPhotos.slice(0, 4);
-            strip1Photos.forEach(photoSrc => photostrip1Container.appendChild(createImageElement(photoSrc)));
+            strip1Photos.forEach(photoSrc => photostrip1Container.appendChild(createImageContainer(photoSrc)));
             photostrip1Container.appendChild(createLogoElement());
 
-            resultLayoutContainer.classList.remove('md:flex-row'); // Reset layout
+            resultLayoutContainer.classList.remove('md:flex-row');
 
             if (totalPhotosInSession === 8) {
                 const strip2Photos = capturedPhotos.slice(4, 8);
-                strip2Photos.forEach(photoSrc => photostrip2Container.appendChild(createImageElement(photoSrc)));
+                strip2Photos.forEach(photoSrc => photostrip2Container.appendChild(createImageContainer(photoSrc)));
                 photostrip2Container.appendChild(createLogoElement());
                 photostrip2Container.classList.remove('hidden');
                 downloadStrip2Button.classList.remove('hidden');
@@ -503,20 +710,21 @@
             applyPreviewFilter('none');
         }
         
-        function createImageElement(src) {
+        function createImageContainer(src) {
+            const container = document.createElement('div');
+            container.className = 'photostrip-img-container';
             const img = document.createElement('img');
             img.src = src;
             img.className = 'photostrip-img';
-            return img;
+            container.appendChild(img);
+            return container;
         }
         
         function createLogoElement() {
             const logoContainer = document.createElement('div');
-            logoContainer.className = 'text-center py-4 logo-container';
-            logoContainer.style.fontFamily = "'Pacifico', cursive";
-            logoContainer.style.fontSize = "24px";
-            logoContainer.style.color = (selectedFrameColor === 'black' || selectedFrameColor === '#8D021F') ? 'white' : 'black';
-            logoContainer.textContent = "sura sura";
+            logoContainer.className = 'text-center py-4 strip-logo';
+            logoContainer.textContent = "Sura Sura";
+            logoContainer.style.color = isColorDark(selectedFrameColor) ? 'white' : 'black';
             return logoContainer;
         }
 
@@ -540,8 +748,8 @@
 
             const logoSpace = 0.8 * INCH_TO_PX;
             const totalPhotoSpace = canvas.height - (FRAME_PADDING * 2) - logoSpace - (PHOTO_SPACING * (photos.length -1));
-            const photoHeight = totalPhotoSpace / photos.length;
-            const photoWidth = canvas.width - (FRAME_PADDING * 2);
+            const dHeight = totalPhotoSpace / photos.length;
+            const dWidth = canvas.width - (FRAME_PADDING * 2);
             let currentY = FRAME_PADDING;
 
             const imagePromises = photos.map(src => new Promise(res => {
@@ -553,10 +761,23 @@
             const loadedImages = await Promise.all(imagePromises);
 
             for (const img of loadedImages) {
-                // Apply filter to a temporary canvas before drawing to the main one
+                const sWidth = img.width;
+                const sHeight = img.height;
+                const sRatio = sWidth / sHeight;
+                const dRatio = dWidth / dHeight;
+                let sx = 0, sy = 0, cropWidth = sWidth, cropHeight = sHeight;
+
+                if (sRatio > dRatio) { 
+                    cropWidth = sHeight * dRatio;
+                    sx = (sWidth - cropWidth) / 2;
+                } else if (sRatio < dRatio) { 
+                    cropHeight = sWidth / dRatio;
+                    sy = (sHeight - cropHeight) / 2;
+                }
+                
                 const tempCanvas = document.createElement('canvas');
-                tempCanvas.width = img.width;
-                tempCanvas.height = img.height;
+                tempCanvas.width = sWidth;
+                tempCanvas.height = sHeight;
                 const tempCtx = tempCanvas.getContext('2d');
                 
                 if (filter === 'vintage') {
@@ -567,15 +788,20 @@
                     tempCtx.filter = 'none';
                 }
                 tempCtx.drawImage(img, 0, 0);
-
-                ctx.drawImage(tempCanvas, FRAME_PADDING, currentY, photoWidth, photoHeight);
-                currentY += photoHeight + PHOTO_SPACING;
+                
+                ctx.drawImage(tempCanvas, sx, sy, cropWidth, cropHeight, FRAME_PADDING, currentY, dWidth, dHeight);
+                currentY += dHeight + PHOTO_SPACING;
             }
 
-            ctx.font = `${0.3 * INCH_TO_PX}px 'Pacifico'`;
-            ctx.fillStyle = (frameColor === 'black' || frameColor === '#8D021F') ? 'white' : 'black';
+            const logoText = "Sura Sura";
+            ctx.font = `${0.35 * INCH_TO_PX}px 'Pacifico'`;
             ctx.textAlign = 'center';
-            ctx.fillText("sura sura", canvas.width / 2, canvas.height - FRAME_PADDING - (logoSpace / 4));
+            ctx.fillStyle = isColorDark(frameColor) ? 'white' : 'black';
+            ctx.shadowColor = 'rgba(0,0,0,0.5)';
+            ctx.shadowOffsetX = 3;
+            ctx.shadowOffsetY = 3;
+            ctx.shadowBlur = 4;
+            ctx.fillText(logoText, canvas.width / 2, canvas.height - FRAME_PADDING - (logoSpace / 4));
 
             return canvas;
         }
@@ -622,30 +848,30 @@
         });
         
         retakeButton.addEventListener('click', () => {
-             resultScreen.classList.add('hidden');
-             sessionSelectionScreen.classList.remove('hidden');
+             stopBackgroundMusic();
+             showScreen(sessionSelectionScreen);
         });
 
         changeFrameButton.addEventListener('click', () => {
-            resultScreen.classList.add('hidden');
-            frameSelectionScreen.classList.remove('hidden');
+            stopBackgroundMusic();
+            showScreen(frameSelectionScreen);
         });
         
         function delay(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
         }
         
+        window.addEventListener('DOMContentLoaded', () => {
+            showScreen(initialScreen);
+            animateTitle();
+        });
+        
         window.addEventListener('beforeunload', () => {
             if (stream) {
-                stream.getTracks().forEach(track => track.stop());
+                stopCamera();
             }
         });
 
     </script>
 </body>
 </html>
-<script>
-    // Ensure the video element is ready before starting the camera
-    video.addEventListener('loadedmetadata', async () => {
-        await initCamera();
-    });
