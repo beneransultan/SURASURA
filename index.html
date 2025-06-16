@@ -798,6 +798,18 @@
         startButton.addEventListener('click', async () => {
             initAudio(); 
             playStartSound();
+            // Mulai musik langsung setelah klik START
+            try {
+                bgMusic.muted = false;
+                bgMusic.volume = 1.0;
+                bgMusic.currentTime = 0;
+                await bgMusic.play();
+                musicOn.style.display = 'inline';
+                musicOff.style.display = 'none';
+                musicPlaying = true;
+            } catch (e) {
+                console.log('Gagal play musik:', e);
+            }
             const cameraReady = await initCamera();
             if (cameraReady) {
                 playCoinSound();
