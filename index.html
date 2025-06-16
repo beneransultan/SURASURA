@@ -17,20 +17,17 @@
             overflow-x: hidden;
         }
 
-        .mario-title, .mario-heading {
+        .mario-title {
             font-family: 'Press Start 2P', cursive;
             font-size: 1.8rem; /* Adjusted for mobile */
             color: #ffffff; /* White text for contrast on red */
             text-shadow: 2px 2px 0px #000, 4px 4px 0px #fbd000; /* Black and Yellow shadow */
+            transform: rotate(-2deg);
             display: inline-block;
-        }
-
-        .mario-title {
-             transform: rotate(-2deg);
         }
         
         @media (min-width: 640px) {
-            .mario-title, .mario-heading {
+            .mario-title {
                 font-size: 2.5rem;
                 text-shadow: 3px 3px 0px #000, 6px 6px 0px #fbd000;
             }
@@ -38,7 +35,7 @@
         
         .mario-title span {
             display: inline-block;
-            transition: transform 0.2s ease-out; /* Smoother transition */
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
         }
 
         .mario-button {
@@ -113,15 +110,23 @@
 
         #countdown {
             font-family: 'Press Start 2P', cursive;
-            font-size: 15vw;
-            color: #fbd000;
-            text-shadow: 5px 5px 0px #000, -5px -5px 0px #42b842;
+            font-size: 7vw;
+            color: #fff;
+            text-shadow: 0 2px 12px rgba(255,255,255,0.7), 0 2px 8px #000, 0 0px 0px #42b842;
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 20;
             pointer-events: none;
+            background: none;
+            border-radius: 0;
+            box-shadow: none;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            padding: 0;
+            border: none;
+            filter: blur(0.5px) brightness(1.2) drop-shadow(0 0 8px rgba(255,255,255,0.25));
         }
         
         #flash {
@@ -195,26 +200,229 @@
         .footer-link:hover {
             color: #ffffff;
         }
-        
-        .music-btn {
+
+        /* --- Strip Illustration Styles --- */
+        #strip-illustration {
+            perspective: 600px;
+        }
+        .strip-demo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #fffbe9;
+            border: 3px solid #222;
+            border-radius: 18px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.18), 0 1.5px 0 #fbd000;
+            padding: 10px 8px;
+            width: 54px;
+            min-width: 54px;
+            gap: 7px;
+            transform: translateY(80px) scale(0.95) rotate(-3deg);
+            opacity: 0;
+        }
+        .strip-demo:nth-child(2) {
+            background: #f5f5dc;
+            border-color: #800020;
+            transform: translateY(80px) scale(0.95) rotate(2deg);
+        }
+        .strip-demo:nth-child(3) {
+            background: #e7e7e7;
+            border-color: #42b842;
+            transform: translateY(80px) scale(0.95) rotate(-5deg);
+        }
+        .strip-slot {
+            width: 38px;
+            height: 32px;
+            background: #e0e0e0;
+            border: 2px dashed #bbb;
+            border-radius: 7px;
+            margin: 0 auto;
+            box-shadow: 0 1.5px 0 #fff;
+        }
+        @keyframes strip-pop {
+            0% {
+                opacity: 0;
+                transform: translateY(80px) scale(0.95) rotate(var(--strip-rot, -3deg));
+            }
+            60% {
+                opacity: 1;
+                transform: translateY(-10px) scale(1.04) rotate(var(--strip-rot, -3deg));
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1) rotate(var(--strip-rot, -3deg));
+            }
+        }
+        .animate-strip-pop {
+            animation: strip-pop 0.7s cubic-bezier(0.68,-0.55,0.27,1.55) forwards;
+        }
+        .strip-demo:nth-child(1) { --strip-rot: -3deg; }
+        .strip-demo:nth-child(2) { --strip-rot: 2deg; }
+        .strip-demo:nth-child(3) { --strip-rot: -5deg; }
+
+        /* --- Strip Preview for Level Selection --- */
+        .strip-demo-preview {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #fffbe9;
+            border: 2px solid #222;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.10), 0 1px 0 #fbd000;
+            padding: 5px 4px;
+            width: 32px;
+            min-width: 32px;
+            gap: 3px;
+        }
+        .strip-preview.flex-row .strip-demo-preview {
+            margin: 0 2px;
+        }
+        .strip-demo-preview:nth-child(2) {
+            background: #f5f5dc;
+            border-color: #800020;
+        }
+        .strip-slot-preview {
+            width: 22px;
+            height: 16px;
+            background: #e0e0e0;
+            border: 1.2px dashed #bbb;
+            border-radius: 4px;
+            margin: 0 auto;
+            box-shadow: 0 1px 0 #fff;
+        }
+        .strip-preview {
+            cursor: pointer;
+        }
+
+        /* --- Polaroid Animation --- */
+        #polaroid-anim-container {
             position: fixed;
-            top: 1rem;
-            right: 1rem;
-            background-color: rgba(0,0,0,0.5);
-            border: 2px solid white;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            top: 0; left: 0; width: 100vw; height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
+            background: rgba(0,0,0,0.25);
             z-index: 100;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
         }
-        .music-btn svg {
-            width: 24px;
-            height: 24px;
-            fill: white;
+        #polaroid-anim-container.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .polaroid-cam {
+            width: 220px;
+            height: 220px;
+            background: #fff;
+            border: 6px solid #222;
+            border-radius: 28px 28px 50px 50px;
+            box-shadow: 0 12px 36px rgba(0,0,0,0.18);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            overflow: visible;
+        }
+        .polaroid-lens {
+            width: 54px; height: 54px;
+            background: #222;
+            border-radius: 50%;
+            border: 6px solid #aaa;
+            position: absolute;
+            top: 32px; left: 50%;
+            transform: translateX(-50%);
+        }
+        .polaroid-slot {
+            width: 110px; height: 22px;
+            background: #bbb;
+            border-radius: 0 0 18px 18px;
+            position: absolute;
+            bottom: 0; left: 50%;
+            transform: translateX(-50%);
+        }
+        .polaroid-strip {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%) translateY(0);
+            width: 98px;
+            height: 160px;
+            background: #fffbe9;
+            border: 4px solid #222;
+            border-radius: 32px;
+            box-shadow: 0 12px 36px rgba(0,0,0,0.18), 0 2.5px 0 #fbd000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            padding: 18px 12px;
+            opacity: 0;
+            z-index: 2;
+            animation: strip-morph-out 1.3s cubic-bezier(0.68,-0.55,0.27,1.55) forwards;
+            animation-delay: 0.2s;
+        }
+        @keyframes strip-morph-out {
+            0% {
+                opacity: 0;
+                border-radius: 60px;
+                box-shadow: 0 0px 0px rgba(0,0,0,0.10);
+                transform: translateX(-50%) translateY(-10px) scale(0.7);
+            }
+            30% {
+                opacity: 1;
+                border-radius: 40px;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+                transform: translateX(-50%) translateY(0) scale(1.05);
+            }
+            60% {
+                border-radius: 18px;
+                box-shadow: 0 12px 36px rgba(0,0,0,0.18);
+                transform: translateX(-50%) translateY(60px) scale(1.08);
+            }
+            100% {
+                opacity: 1;
+                border-radius: 12px;
+                box-shadow: 0 12px 36px rgba(0,0,0,0.18);
+                transform: translateX(-50%) translateY(170px) scale(1);
+            }
+        }
+
+        /* --- Centering for screens --- */
+        .screen-center {
+            min-height: 70vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #review-gallery {
+            justify-content: center;
+            align-items: center;
+        }
+        #frame-choices-container {
+            justify-content: center !important;
+            align-items: center !important;
+        }
+
+        .screen-title {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 10;
+            background: none;
+            pointer-events: none;
+        }
+        .screen-center > .screen-title h2 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 0;
+            pointer-events: auto;
+        }
+        .screen-center > .flex-1, .screen-center > .flex-col {
+            margin-top: 3.5rem;
         }
 
     </style>
@@ -226,17 +434,71 @@
         <!-- Initial State -->
         <div id="initial-screen" class="flex flex-col items-center justify-center flex-grow">
             <h1 id="main-title" class="mario-title mb-4">Sura Sura</h1>
+            <!-- Strip Illustration Start -->
+            <div id="strip-illustration" class="flex gap-4 mb-8">
+                <div class="strip-demo animate-strip-pop" style="animation-delay:0.1s">
+                    <div class="strip-slot"></div>
+                    <div class="strip-slot"></div>
+                    <div class="strip-slot"></div>
+                    <div class="strip-slot"></div>
+                </div>
+                <div class="strip-demo animate-strip-pop" style="animation-delay:0.3s">
+                    <div class="strip-slot"></div>
+                    <div class="strip-slot"></div>
+                    <div class="strip-slot"></div>
+                    <div class="strip-slot"></div>
+                </div>
+                <div class="strip-demo animate-strip-pop" style="animation-delay:0.5s">
+                    <div class="strip-slot"></div>
+                    <div class="strip-slot"></div>
+                    <div class="strip-slot"></div>
+                    <div class="strip-slot"></div>
+                </div>
+            </div>
+            <!-- Strip Illustration End -->
             <p class="text-xl sm:text-2xl mb-8">It's-a-me, Photobooth!</p>
             <button id="start-button" class="mario-button text-lg sm:text-xl px-8 sm:px-10 py-4 sm:py-5 rounded-xl">START</button>
             <p id="error-msg" class="mt-4 text-red-400 text-lg"></p>
         </div>
         
         <!-- Session Selection State -->
-        <div id="session-selection-screen" class="hidden">
-            <h2 class="mario-heading mb-8">Pilih Level Kamu</h2>
-            <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
-                <button id="one-strip-button" class="mario-button text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-xl">1-UP (4 FOTO)</button>
-                <button id="two-strips-button" class="mario-button text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-xl">2-UP (8 FOTO)</button>
+        <div id="session-selection-screen" class="hidden screen-center">
+            <div class="screen-title w-full flex justify-center pt-8 pb-2">
+                <h2 class="text-2xl sm:text-4xl font-bold">Pilih Level Kamu</h2>
+            </div>
+            <div class="flex flex-row justify-center items-end gap-12 mb-8 mt-4 flex-1">
+                <div class="flex flex-col items-center group">
+                    <button id="one-strip-button" class="mario-button text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-xl mb-2">1-UP (4 FOTO)</button>
+                    <!-- Strip Preview 1 -->
+                    <div class="strip-preview mt-1 group-hover:scale-105 group-hover:-rotate-2 transition-transform duration-300">
+                        <div class="strip-demo-preview">
+                            <div class="strip-slot-preview"></div>
+                            <div class="strip-slot-preview"></div>
+                            <div class="strip-slot-preview"></div>
+                            <div class="strip-slot-preview"></div>
+                        </div>
+                    </div>
+                    <span class="text-xs mt-1 text-white/80">1 strip</span>
+                </div>
+                <div class="flex flex-col items-center group">
+                    <button id="two-strips-button" class="mario-button text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-xl mb-2">2-UP (8 FOTO)</button>
+                    <!-- Strip Preview 2 (horizontal) -->
+                    <div class="strip-preview mt-1 group-hover:scale-105 group-hover:rotate-2 transition-transform duration-300 flex flex-row gap-2">
+                        <div class="strip-demo-preview">
+                            <div class="strip-slot-preview"></div>
+                            <div class="strip-slot-preview"></div>
+                            <div class="strip-slot-preview"></div>
+                            <div class="strip-slot-preview"></div>
+                        </div>
+                        <div class="strip-demo-preview">
+                            <div class="strip-slot-preview"></div>
+                            <div class="strip-slot-preview"></div>
+                            <div class="strip-slot-preview"></div>
+                            <div class="strip-slot-preview"></div>
+                        </div>
+                    </div>
+                    <span class="text-xs mt-1 text-white/80">2 strip</span>
+                </div>
             </div>
         </div>
 
@@ -251,25 +513,29 @@
         </div>
 
         <!-- Review Photos State -->
-        <div id="review-screen" class="hidden">
-            <h2 class="mario-heading mb-6">Review Your Power-Ups!</h2>
-            <div id="review-gallery" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                <!-- Photos for review will be generated here -->
+        <div id="review-screen" class="hidden screen-center">
+            <div class="screen-title w-full flex justify-center pt-8 pb-2">
+                <h2 class="text-2xl sm:text-4xl font-bold">Review Your Power-Ups!</h2>
             </div>
-            <button id="continue-to-frame-button" class="mario-button text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-xl">Let's-a-Go!</button>
+            <div class="flex flex-col justify-center items-center flex-1 w-full">
+                <div id="review-gallery" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 justify-center items-center"></div>
+                <button id="continue-to-frame-button" class="mario-button text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-xl mx-auto">Let's-a-Go!</button>
+            </div>
         </div>
 
         <!-- Frame Selection State -->
-        <div id="frame-selection-state" class="hidden">
-            <h2 class="mario-heading mb-8">Pilih Warna Frame</h2>
-            <div id="frame-choices-container" class="relative flex flex-wrap justify-center items-center gap-6">
-                 <!-- The color choices are generated by JS now -->
+        <div id="frame-selection-state" class="hidden screen-center">
+            <div class="screen-title w-full flex justify-center pt-8 pb-2">
+                <h2 class="text-2xl sm:text-4xl font-bold">Pilih Warna Frame</h2>
+            </div>
+            <div class="flex flex-col items-center justify-center flex-1 w-full">
+                <div id="frame-choices-container" class="relative flex flex-wrap justify-center items-center gap-6 mx-auto"></div>
             </div>
         </div>
 
         <!-- Result State -->
         <div id="result-screen" class="hidden">
-             <h2 class="mario-heading mb-8">Here We Go!</h2>
+             <h2 class="text-2xl sm:text-4xl font-bold mb-6">Here We Go!</h2>
             <div id="result-layout-container" class="flex flex-col lg:flex-row items-center justify-center gap-8 w-full">
                 <div id="strips-wrapper" class="flex flex-col md:flex-row justify-center items-start gap-8">
                     <div id="photostrip1-container" class="photostrip w-[200px] md:w-[220px] rounded-lg"></div>
@@ -304,15 +570,20 @@
 
     <canvas id="capture-canvas" class="hidden"></canvas>
     
-    <button id="music-toggle" class="music-btn hidden" title="Toggle Music">
-      <svg id="music-on" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 18V5l12-2v10.55A4 4 0 1 1 19 17V5L9 7v11zM11 19.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/></svg>
-      <svg id="music-off" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display:none;"><path d="M12 7v1.88l5.3-2.65 1.4 2.77-5.3 2.65V17a4 4 0 1 1-2-3.46V7h4V3H9v4h3zm-2 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></svg>
-    </button>
-    <audio id="bg-music" src="https://vgmsite.com/soundtracks/super-mario-64-soundtrack/ypaxqeqz/1-11%20-%20Slider.mp3" loop preload="auto"></audio>
-    <audio id="audio-coin" src="https://themushroomkingdom.net/sounds/wav/smb/smb_coin.wav" preload="auto"></audio>
-    <audio id="audio-jump" src="https://themushroomkingdom.net/sounds/wav/smb/smb_jump-small.wav" preload="auto"></audio>
-    <audio id="audio-powerup" src="https://themushroomkingdom.net/sounds/wav/smb/smb_powerup.wav" preload="auto"></audio>
-
+    <!-- Polaroid Animation Container (hidden by default) -->
+    <div id="polaroid-anim-container" class="hidden">
+        <div class="polaroid-cam">
+            <div class="polaroid-lens"></div>
+            <div class="polaroid-slot"></div>
+            <div class="polaroid-strip" id="polaroid-strip-demo">
+                <div class="strip-slot"></div>
+                <div class="strip-slot"></div>
+                <div class="strip-slot"></div>
+                <div class="strip-slot"></div>
+            </div>
+        </div>
+    </div>
+    
     <script>
         // DOM Elements
         const initialScreen = document.getElementById('initial-screen');
@@ -345,30 +616,61 @@
         const captureCanvas = document.getElementById('capture-canvas');
         const mainTitle = document.getElementById('main-title');
 
-        const musicToggle = document.getElementById('music-toggle');
-        const musicOnIcon = document.getElementById('music-on');
-        const musicOffIcon = document.getElementById('music-off');
-        const bgMusic = document.getElementById('bg-music');
-
         // State
         let stream;
         let capturedPhotos = [];
         let selectedFrameColor = '#F5F5DC';
         let currentFilter = 'none';
         let totalPhotosInSession = 0;
-        let isAudioUnlocked = false;
         const PHOTO_WIDTH = 640; 
         const PHOTO_HEIGHT = 480;
 
-        // --- Sound Functions ---
-        function playSound(audioId, volume = 1.0) {
-            if (!isAudioUnlocked) return;
-            const audio = document.getElementById(audioId);
-            if (audio) {
-                audio.currentTime = 0;
-                audio.volume = volume;
-                audio.play().catch(e => console.error(`Error playing ${audioId}:`, e));
+        // Audio Context for sounds
+        let audioCtx;
+        
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             }
+        }
+        
+        function playCoinSound() {
+            if (!audioCtx) return;
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(987.77, audioCtx.currentTime); // B5
+            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+
+            setTimeout(() => {
+                 oscillator.frequency.setValueAtTime(1318.51, audioCtx.currentTime); // E6
+            }, 50);
+
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+            
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.1);
+        }
+        
+        function playJumpSound() {
+            if (!audioCtx) return;
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            oscillator.type = 'square';
+            oscillator.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+            gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+
+            oscillator.frequency.exponentialRampToValueAtTime(1046.50, audioCtx.currentTime + 0.15);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+            
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.15);
         }
         
         // --- JS Animations ---
@@ -388,7 +690,7 @@
             Array.from(mainTitle.children).forEach((span, index) => {
                 span.addEventListener('mouseover', () => {
                      span.style.transform = 'translateY(-10px) rotate(5deg)';
-                     playSound('audio-coin');
+                     playCoinSound();
                 });
                  span.addEventListener('mouseout', () => {
                      span.style.transform = 'translateY(0px) rotate(0deg)';
@@ -417,12 +719,12 @@
                 particle.style.top = `${initialY}px`;
                 
                 setTimeout(() => {
-                    particle.style.transition = 'all 0.8s cubic-bezier(0.25, 1, 0.5, 1)';
+                    particle.style.transition = 'all 0.5s ease-out';
                     particle.style.transform = `translate(${Math.cos(angle * Math.PI / 180) * distance}px, ${Math.sin(angle * Math.PI / 180) * distance}px) scale(0)`;
                     particle.style.opacity = '0';
                 }, 10);
                 
-                setTimeout(() => particle.remove(), 900);
+                setTimeout(() => particle.remove(), 600);
             }
         }
         
@@ -466,36 +768,21 @@
             } else {
                 siteFooter.classList.add('hidden');
             }
-            
-            if (screen === resultScreen) {
-                musicToggle.classList.remove('hidden');
-            } else {
-                musicToggle.classList.add('hidden');
-                bgMusic.pause();
-                musicOnIcon.style.display = 'block';
-                musicOffIcon.style.display = 'none';
-            }
         }
 
         // Start button leads to session selection
         startButton.addEventListener('click', async () => {
-            isAudioUnlocked = true;
+            initAudio(); 
             const cameraReady = await initCamera();
             if (cameraReady) {
-                playSound('audio-coin');
+                playCoinSound();
                 showScreen(sessionSelectionScreen);
             }
         });
 
         // Session selection buttons
-        oneStripButton.addEventListener('click', () => {
-            playSound('audio-powerup');
-            startPhotoSession(4);
-        });
-        twoStripsButton.addEventListener('click', () => {
-            playSound('audio-powerup');
-            startPhotoSession(8);
-        });
+        oneStripButton.addEventListener('click', () => startPhotoSession(4));
+        twoStripsButton.addEventListener('click', () => startPhotoSession(8));
 
         // Photo session logic
         async function startPhotoSession(photoCount) {
@@ -526,7 +813,7 @@
                 const interval = setInterval(() => {
                     if (count > 0) {
                         countdownEl.textContent = count;
-                        playSound('audio-coin', 0.4);
+                        playCoinSound();
                         count--;
                     } else {
                         clearInterval(interval);
@@ -545,7 +832,7 @@
         }
 
         function captureSinglePhoto() {
-            playSound('audio-jump');
+            playJumpSound();
             triggerFlash();
             const rect = video.getBoundingClientRect();
             createParticles(rect.width/2, rect.height/2);
@@ -625,10 +912,40 @@
             }
         });
         
+        // --- Polaroid Animation Logic ---
+        function showPolaroidAnimation(callback) {
+            const animContainer = document.getElementById('polaroid-anim-container');
+            animContainer.classList.remove('hidden');
+            setTimeout(() => {
+                animContainer.classList.add('active');
+            }, 10);
+            setTimeout(() => {
+                animContainer.classList.remove('active');
+                setTimeout(() => {
+                    animContainer.classList.add('hidden');
+                    if (typeof callback === 'function') callback();
+                }, 350);
+            }, 1400); // duration of animation + fade
+        }
+
+        // Frame selection logic
+        continueToFrameButton.addEventListener('click', () => {
+            populateFrameChoices();
+            showScreen(frameSelectionScreen);
+        });
+
+        // Setelah pilih warna frame, tampilkan animasi polaroid sebelum result
+        function handleFrameSelected() {
+            showPolaroidAnimation(() => {
+                showScreen(resultScreen);
+                generatePhotostripsPreview();
+            });
+        }
+
+        // Update event handler pada frame choices
         function populateFrameChoices() {
             const container = document.getElementById('frame-choices-container');
-            container.innerHTML = ''; 
-            
+            container.innerHTML = ''; // Clear previous choices
             const colors = [
                 { name: 'Putih Tulang', color: '#F5F5DC' },
                 { name: 'Hitam', color: '#000000' },
@@ -636,7 +953,6 @@
                 { name: 'Burgundy', color: '#800020' },
                 { name: 'Kuning Mario', color: '#fbd000' }
             ];
-
             colors.forEach(item => {
                 const choice = document.createElement('div');
                 choice.className = 'frame-choice';
@@ -644,14 +960,12 @@
                 choice.dataset.color = item.color;
                 choice.title = item.name;
                 choice.onclick = () => {
-                    playSound('audio-coin');
+                    playCoinSound();
                     selectedFrameColor = item.color;
-                    showScreen(resultScreen);
-                    generatePhotostripsPreview();
+                    handleFrameSelected();
                 };
                 container.appendChild(choice);
             });
-
             const pickerLabel = document.createElement('label');
             pickerLabel.htmlFor = 'color-picker-input';
             pickerLabel.title = 'Pilih Warnamu';
@@ -665,21 +979,13 @@
             pickerInput.id = 'color-picker-input';
             pickerInput.className = 'hidden';
             pickerInput.onchange = (e) => {
-                playSound('audio-coin');
+                playCoinSound();
                 selectedFrameColor = e.target.value;
-                showScreen(resultScreen);
-                generatePhotostripsPreview();
+                handleFrameSelected();
             };
-            
             container.appendChild(pickerLabel);
             container.appendChild(pickerInput);
         }
-
-        continueToFrameButton.addEventListener('click', () => {
-            playSound('audio-powerup');
-            populateFrameChoices();
-            showScreen(frameSelectionScreen);
-        });
 
         // Filter selection logic
         document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -892,18 +1198,6 @@
             ctx.drawImage(canvas2, canvas1.width + gap, 0);
 
             downloadCanvas(combinedCanvas, 'sura-sura-semua.png');
-        });
-        
-        musicToggle.addEventListener('click', () => {
-            if (bgMusic.paused) {
-                bgMusic.play().catch(e => console.log("Music play failed", e));
-                musicOnIcon.style.display = 'block';
-                musicOffIcon.style.display = 'none';
-            } else {
-                bgMusic.pause();
-                musicOnIcon.style.display = 'none';
-                musicOffIcon.style.display = 'block';
-            }
         });
         
         retakeButton.addEventListener('click', () => {
