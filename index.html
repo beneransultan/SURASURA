@@ -584,6 +584,18 @@
         </div>
     </div>
     
+    <!-- Music Button & Audio -->
+    <button class="music-btn fixed top-4 right-4 z-50 bg-yellow-400 border-4 border-black rounded-full p-2 shadow-lg hover:scale-105 transition-transform" id="music-toggle" title="Toggle Music">
+      <svg id="music-on" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"></path></svg>
+      <svg id="music-off" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M16.5 12a4.5 4.5 0 0 1-9 0a4.5 4.5 0 0 1 9 0zm-4.5 7a7 7 0 0 0 7-7h-2a5 5 0 0 1-10 0H3a7 7 0 0 0 7 7z"></path></svg>
+    </button>
+    <audio id="bg-music" src="https://vgmsite.com/soundtracks/super-mario-bros.-ost-nes-gamerip/uwqjzqkq/01%20Title%20Screen.mp3" loop preload="auto"></audio>
+    <audio id="audio-coin" src="https://themushroomkingdom.net/sounds/wav/smb/smb_coin.wav" preload="auto"></audio>
+    <audio id="audio-jump" src="https://themushroomkingdom.net/sounds/wav/smb/smb_jump-small.wav" preload="auto"></audio>
+    <audio id="audio-powerup" src="https://themushroomkingdom.net/sounds/wav/smb/smb_powerup.wav" preload="auto"></audio>
+    <audio id="audio-start" src="https://themushroomkingdom.net/sounds/wav/smb/smb_game_start.wav" preload="auto"></audio>
+    <audio id="audio-win" src="https://themushroomkingdom.net/sounds/wav/smb/smb_stage_clear.wav" preload="auto"></audio>
+    
     <script>
         // DOM Elements
         const initialScreen = document.getElementById('initial-screen');
@@ -627,6 +639,17 @@
 
         // Audio Context for sounds
         let audioCtx;
+        // Audio elements for SFX and music
+        const audioCoin = document.getElementById('audio-coin');
+        const audioJump = document.getElementById('audio-jump');
+        const audioPowerup = document.getElementById('audio-powerup');
+        const bgMusic = document.getElementById('bg-music');
+        const musicBtn = document.getElementById('music-toggle');
+        const musicOn = document.getElementById('music-on');
+        const musicOff = document.getElementById('music-off');
+        let musicPlaying = false;
+        const audioStart = document.getElementById('audio-start');
+        const audioWin = document.getElementById('audio-win');
         
         function initAudio() {
             if (!audioCtx) {
@@ -635,43 +658,44 @@
         }
         
         function playCoinSound() {
-            if (!audioCtx) return;
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            
-            oscillator.type = 'sine';
-            oscillator.frequency.setValueAtTime(987.77, audioCtx.currentTime); // B5
-            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-
-            setTimeout(() => {
-                 oscillator.frequency.setValueAtTime(1318.51, audioCtx.currentTime); // E6
-            }, 50);
-
-            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
-            
-            oscillator.start();
-            oscillator.stop(audioCtx.currentTime + 0.1);
+            if(audioCoin){ audioCoin.currentTime = 0; audioCoin.play(); }
         }
         
         function playJumpSound() {
-            if (!audioCtx) return;
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            
-            oscillator.type = 'square';
-            oscillator.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
-            gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
-
-            oscillator.frequency.exponentialRampToValueAtTime(1046.50, audioCtx.currentTime + 0.15);
-            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
-            
-            oscillator.start();
-            oscillator.stop(audioCtx.currentTime + 0.15);
+            if(audioJump){ audioJump.currentTime = 0; audioJump.play(); }
         }
+        
+        function playPowerupSound() {
+            if(audioPowerup){ audioPowerup.currentTime = 0; audioPowerup.play(); }
+        }
+        
+        function playStartSound() {
+            if(audioStart){ audioStart.currentTime = 0; audioStart.play(); }
+        }
+        
+        function playWinSound() {
+            if(audioWin){ audioWin.currentTime = 0; audioWin.play(); }
+        }
+        
+        // Music toggle logic
+        musicBtn.onclick = () => {
+            if (bgMusic.paused) {
+                bgMusic.play();
+                musicOn.style.display = 'inline';
+                musicOff.style.display = 'none';
+                musicPlaying = true;
+            } else {
+                bgMusic.pause();
+                musicOn.style.display = 'none';
+                musicOff.style.display = 'inline';
+                musicPlaying = false;
+            }
+        };
+        bgMusic.onended = () => {
+            musicPlaying = false;
+            musicOn.style.display = 'none';
+            musicOff.style.display = 'inline';
+        };
         
         // --- JS Animations ---
         function animateTitle() {
@@ -773,6 +797,7 @@
         // Start button leads to session selection
         startButton.addEventListener('click', async () => {
             initAudio(); 
+            playStartSound();
             const cameraReady = await initCamera();
             if (cameraReady) {
                 playCoinSound();
@@ -936,6 +961,7 @@
 
         // Setelah pilih warna frame, tampilkan animasi polaroid sebelum result
         function handleFrameSelected() {
+            playWinSound();
             showPolaroidAnimation(() => {
                 showScreen(resultScreen);
                 generatePhotostripsPreview();
@@ -960,7 +986,7 @@
                 choice.dataset.color = item.color;
                 choice.title = item.name;
                 choice.onclick = () => {
-                    playCoinSound();
+                    playWinSound();
                     selectedFrameColor = item.color;
                     handleFrameSelected();
                 };
@@ -979,7 +1005,7 @@
             pickerInput.id = 'color-picker-input';
             pickerInput.className = 'hidden';
             pickerInput.onchange = (e) => {
-                playCoinSound();
+                playWinSound();
                 selectedFrameColor = e.target.value;
                 handleFrameSelected();
             };
