@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sura Sura Photobooth</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'VT323', monospace;
+            background: linear-gradient(135deg, #ff7eb9, #ffb380, #ffeb80, #b3ff80, #80b3ff, #c280ff, #ff80c2);
+            background-size: 600% 600%;
+            animation: gradientAnimation 15s ease infinite;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .y2k-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 2.5rem;
+            text-shadow: 3px 3px 0px #e03f9a, 6px 6px 0px #9b2869;
+            transform: rotate(-2deg);
+        }
+
+        .y2k-button {
+            font-family: 'Press Start 2P', cursive;
+            background-color: #ff7eb9;
+            color: white;
+            border: 4px solid #9b2869;
+            box-shadow: 5px 5px 0px #9b2869;
+            transition: all 0.2s ease-in-out;
+            transform: scale(1.05);
+            cursor: pointer;
+        }
+
+        .y2k-button:hover {
+            background-color: #ff94c7;
+            box-shadow: 2px 2px 0px #9b2869;
+            transform: translate(3px, 3px) scale(1.05);
+        }
+        
+        .y2k-button:active, .filter-btn.active {
+            background-color: #e03f9a;
+            box-shadow: 1px 1px 0px #9b2869;
+            transform: translate(4px, 4px) scale(1.05);
+        }
+        
+        .y2k-button:disabled {
+            background-color: #a0a0a0;
+            box-shadow: 5px 5px 0px #6b6b6b;
+            border-color: #6b6b6b;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .video-container {
+            border: 8px solid #fff;
+            border-image: linear-gradient(45deg, #f87171, #fb923c, #facc15, #a3e635, #60a5fa, #c084fc) 1;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.5), inset 0 0 15px rgba(0,0,0,0.3);
+            background-color: #1a1a1a;
+        }
+
+        .photostrip {
+            box-shadow: 8px 8px 10px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 8px;
+        }
+        
+        .photostrip-img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            transition: filter 0.3s ease;
+        }
+
+        #countdown {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 15vw;
+            color: #ffeb3b;
+            text-shadow: 5px 5px 0px #e03f9a, -5px -5px 0px #60a5fa;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 20;
+            pointer-events: none;
+        }
+        
+        #flash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            opacity: 0;
+            z-index: 30;
+            pointer-events: none;
+            transition: opacity 0.1s ease-out;
+        }
+        
+        .frame-choice {
+            width: 60px;
+            height: 60px;
+            border: 4px solid white;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .frame-choice:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div id="flash"></div>
+    <div class="w-full max-w-6xl mx-auto text-center">
+
+        <!-- Initial State -->
+        <div id="initial-screen">
+            <h1 class="y2k-title mb-4">Sura Sura</h1>
+            <p class="text-2xl mb-8">Get ready to strike a pose! ✨</p>
+            <button id="start-button" class="y2k-button text-xl px-10 py-5 rounded-xl">Mulai</button>
+            <p id="error-msg" class="mt-4 text-red-300 text-lg"></p>
+        </div>
+        
+        <!-- Session Selection State -->
+        <div id="session-selection-screen" class="hidden">
+            <h2 class="text-4xl font-bold mb-8" style="font-family: 'Press Start 2P', cursive;">Pilih Sesi Kamu</h2>
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
+                <button id="one-strip-button" class="y2k-button text-lg px-8 py-4 rounded-xl">1 Strip (4 Foto)</button>
+                <button id="two-strips-button" class="y2k-button text-lg px-8 py-4 rounded-xl">2 Strip (8 Foto)</button>
+            </div>
+        </div>
+
+        <!-- Photobooth State -->
+        <div id="photobooth-screen" class="hidden">
+            <div class="relative inline-block video-container rounded-2xl">
+                <video id="video" width="640" height="480" autoplay playsinline class="rounded-lg scale-x-[-1]"></video>
+                <div id="countdown" class="hidden"></div>
+                 <div id="photo-counter" class="absolute bottom-2 right-4 text-4xl font-bold bg-black bg-opacity-50 px-3 py-1 rounded-lg">0/0</div>
+            </div>
+            <p id="instruction" class="text-3xl mt-4">Bersiap!</p>
+        </div>
+
+        <!-- Review Photos State -->
+        <div id="review-screen" class="hidden">
+            <h2 class="text-4xl font-bold mb-6" style="font-family: 'Press Start 2P', cursive;">Review Fotomu</h2>
+            <div id="review-gallery" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <!-- Photos for review will be generated here -->
+            </div>
+            <button id="continue-to-frame-button" class="y2k-button text-lg px-8 py-4 rounded-xl">Lanjutkan!</button>
+        </div>
+
+
+        <!-- Frame Selection State -->
+        <div id="frame-selection-screen" class="hidden">
+            <h2 class="text-4xl font-bold mb-6" style="font-family: 'Press Start 2P', cursive;">Pilih Frame Favoritmu!</h2>
+            <div class="flex justify-center items-center gap-6">
+                <div class="frame-choice" style="background-color: black;" data-color="black"></div>
+                <div class="frame-choice" style="background-color: white;" data-color="white"></div>
+                <div class="frame-choice" style="background-color: #8D021F;" data-color="#8D021F"></div>
+            </div>
+        </div>
+
+        <!-- Result State -->
+        <div id="result-screen" class="hidden">
+             <h2 class="text-4xl font-bold mb-6" style="font-family: 'Press Start 2P', cursive;">Hasil Karyamu!</h2>
+            <div id="result-layout-container" class="flex flex-col items-center justify-center gap-8 w-full">
+                 <!-- Strips Wrapper -->
+                <div id="strips-wrapper" class="flex flex-col md:flex-row justify-center items-start gap-8">
+                    <div id="photostrip1-container" class="photostrip w-[180px] md:w-[200px] rounded-lg"></div>
+                    <div id="photostrip2-container" class="photostrip w-[180px] md:w-[200px] rounded-lg hidden"></div>
+                </div>
+                 <!-- Actions Wrapper -->
+                <div id="actions-wrapper" class="flex flex-col items-center gap-6 mt-4 md:mt-0 md:pl-8">
+                     <div id="filter-selection" class="flex justify-center items-center gap-4">
+                         <button data-filter="none" class="filter-btn y2k-button text-sm px-4 py-2 rounded-lg active">Normal</button>
+                         <button data-filter="vintage" class="filter-btn y2k-button text-sm px-4 py-2 rounded-lg">Vintage</button>
+                         <button data-filter="bw" class="filter-btn y2k-button text-sm px-4 py-2 rounded-lg">B&W</button>
+                    </div>
+                    <div class="flex flex-wrap justify-center items-center gap-4">
+                        <button id="retake-button" class="y2k-button text-base px-6 py-3 rounded-lg">Ulangi Sesi</button>
+                        <button id="change-frame-button" class="y2k-button text-base px-6 py-3 rounded-lg">Ganti Frame</button>
+                        <button id="download-strip1-button" class="y2k-button text-base px-6 py-3 rounded-lg">Unduh Strip 1</button>
+                        <button id="download-strip2-button" class="y2k-button text-base px-6 py-3 rounded-lg hidden">Unduh Strip 2</button>
+                        <button id="download-all-button" class="y2k-button text-base px-6 py-3 rounded-lg hidden">Unduh Semua</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <canvas id="capture-canvas" class="hidden"></canvas>
+
+    <script>
+        // DOM Elements
+        const initialScreen = document.getElementById('initial-screen');
+        const sessionSelectionScreen = document.getElementById('session-selection-screen');
+        const photoboothScreen = document.getElementById('photobooth-screen');
+        const reviewScreen = document.getElementById('review-screen');
+        const frameSelectionScreen = document.getElementById('frame-selection-screen');
+        const resultScreen = document.getElementById('result-screen');
+        
+        const startButton = document.getElementById('start-button');
+        const oneStripButton = document.getElementById('one-strip-button');
+        const twoStripsButton = document.getElementById('two-strips-button');
+        const continueToFrameButton = document.getElementById('continue-to-frame-button');
+
+        const retakeButton = document.getElementById('retake-button');
+        const changeFrameButton = document.getElementById('change-frame-button');
+        const downloadStrip1Button = document.getElementById('download-strip1-button');
+        const downloadStrip2Button = document.getElementById('download-strip2-button');
+        const downloadAllButton = document.getElementById('download-all-button');
+        
+        const resultLayoutContainer = document.getElementById('result-layout-container');
+
+        const video = document.getElementById('video');
+        const countdownEl = document.getElementById('countdown');
+        const photoCounterEl = document.getElementById('photo-counter');
+        const instructionEl = document.getElementById('instruction');
+        const errorMsgEl = document.getElementById('error-msg');
+        const flashEl = document.getElementById('flash');
+        const captureCanvas = document.getElementById('capture-canvas');
+
+        // State
+        let stream;
+        let capturedPhotos = [];
+        let selectedFrameColor = 'white';
+        let currentFilter = 'none';
+        let totalPhotosInSession = 0;
+        const PHOTO_WIDTH = 640;
+        const PHOTO_HEIGHT = 480;
+
+        // Audio Context for sounds
+        let audioCtx;
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+        
+        function playBeep(freq, duration) {
+            if (!audioCtx) return;
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration / 1000);
+            
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + duration / 1000);
+        }
+        
+        function playShutterSound() {
+            if (!audioCtx) return;
+            const bufferSize = audioCtx.sampleRate * 0.1;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const output = buffer.getChannelData(0);
+
+            for (let i = 0; i < bufferSize; i++) {
+                output[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 2);
+            }
+
+            const source = audioCtx.createBufferSource();
+            source.buffer = buffer;
+            const gainNode = audioCtx.createGain();
+            gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+
+            source.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            source.start();
+            source.stop(audioCtx.currentTime + 0.1);
+        }
+
+        // Initialize camera
+        async function initCamera() {
+             if (stream) return true;
+            try {
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                     throw new Error('Fitur kamera tidak didukung di browser ini.');
+                }
+                const newStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+                video.srcObject = newStream;
+                await video.play();
+                stream = newStream;
+                return true;
+            } catch (err) {
+                console.error("Error accessing camera: ", err);
+                if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
+                    errorMsgEl.textContent = "Kamu perlu mengizinkan akses kamera untuk melanjutkan.";
+                } else {
+                     errorMsgEl.textContent = `Oops! Gagal mengakses kamera. (${err.name})`;
+                }
+                startButton.disabled = true;
+                return false;
+            }
+        }
+
+        // Start button leads to session selection
+        startButton.addEventListener('click', async () => {
+            initAudio(); 
+            const cameraReady = await initCamera();
+            if (cameraReady) {
+                initialScreen.classList.add('hidden');
+                sessionSelectionScreen.classList.remove('hidden');
+            }
+        });
+
+        // Session selection buttons
+        oneStripButton.addEventListener('click', () => startPhotoSession(4));
+        twoStripsButton.addEventListener('click', () => startPhotoSession(8));
+
+        // Photo session logic
+        async function startPhotoSession(photoCount) {
+            totalPhotosInSession = photoCount;
+            capturedPhotos = [];
+            
+            [sessionSelectionScreen, reviewScreen, resultScreen, frameSelectionScreen].forEach(el => el.classList.add('hidden'));
+            photoboothScreen.classList.remove('hidden');
+
+            for (let i = 1; i <= totalPhotosInSession; i++) {
+                photoCounterEl.textContent = `${i-1}/${totalPhotosInSession}`;
+                instructionEl.textContent = `Foto ke-${i}. Siap-siap...`;
+                await runCountdown(3);
+                capturedPhotos.push(captureSinglePhoto());
+                photoCounterEl.textContent = `${i}/${totalPhotosInSession}`;
+            }
+            instructionEl.textContent = "Selesai! Memeriksa fotomu...";
+            await delay(1000);
+            showReviewScreen();
+        }
+
+        // Countdown timer
+        function runCountdown(seconds) {
+            return new Promise(resolve => {
+                countdownEl.classList.remove('hidden');
+                let count = seconds;
+                
+                const interval = setInterval(() => {
+                    if (count > 0) {
+                        countdownEl.textContent = count;
+                        playBeep(440, 150);
+                        count--;
+                    } else {
+                        clearInterval(interval);
+                        countdownEl.classList.add('hidden');
+                        resolve();
+                    }
+                }, 1000);
+            });
+        }
+        
+        function triggerFlash() {
+            flashEl.style.opacity = '0.8';
+            setTimeout(() => {
+                flashEl.style.opacity = '0';
+            }, 150);
+        }
+
+        function captureSinglePhoto() {
+            playShutterSound();
+            triggerFlash();
+            const context = captureCanvas.getContext('2d');
+            captureCanvas.width = PHOTO_WIDTH;
+            captureCanvas.height = PHOTO_HEIGHT;
+            
+            context.translate(PHOTO_WIDTH, 0);
+            context.scale(-1, 1);
+            context.drawImage(video, 0, 0, PHOTO_WIDTH, PHOTO_HEIGHT);
+            const dataUrl = captureCanvas.toDataURL('image/jpeg');
+            context.setTransform(1, 0, 0, 1, 0, 0); // Reset transform
+            return dataUrl;
+        }
+
+        // Review Screen Logic
+        function showReviewScreen() {
+            photoboothScreen.classList.add('hidden');
+            reviewScreen.classList.remove('hidden');
+            
+            const gallery = document.getElementById('review-gallery');
+            gallery.innerHTML = '';
+
+            capturedPhotos.forEach((photoSrc, index) => {
+                const photoContainer = document.createElement('div');
+                photoContainer.className = 'relative group';
+
+                const img = document.createElement('img');
+                img.src = photoSrc;
+                img.className = 'w-full rounded-lg shadow-lg';
+                
+                const retakeBtn = document.createElement('button');
+                retakeBtn.textContent = 'Ulangi Foto';
+                retakeBtn.className = 'absolute bottom-2 left-1/2 -translate-x-1/2 y2k-button text-xs px-3 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity';
+                retakeBtn.onclick = () => initiateRetake(index);
+
+                photoContainer.appendChild(img);
+                photoContainer.appendChild(retakeBtn);
+                gallery.appendChild(photoContainer);
+            });
+        }
+        
+        async function initiateRetake(index) {
+            reviewScreen.classList.add('hidden');
+            photoboothScreen.classList.remove('hidden');
+            photoCounterEl.textContent = `${index}/${totalPhotosInSession}`;
+            instructionEl.textContent = `Ulangi foto ke-${index + 1}...`;
+            
+            await runCountdown(3);
+            capturedPhotos[index] = captureSinglePhoto();
+            await delay(500);
+            showReviewScreen();
+        }
+
+        continueToFrameButton.addEventListener('click', () => {
+            reviewScreen.classList.add('hidden');
+            frameSelectionScreen.classList.remove('hidden');
+        });
+
+        // Frame selection handler
+        document.querySelectorAll('.frame-choice').forEach(choice => {
+            choice.addEventListener('click', () => {
+                selectedFrameColor = choice.dataset.color;
+                frameSelectionScreen.classList.add('hidden');
+                generatePhotostripsPreview();
+                resultScreen.classList.remove('hidden');
+            });
+        });
+
+        // Filter selection logic
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                currentFilter = e.target.dataset.filter;
+                
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+
+                applyPreviewFilter(currentFilter);
+            });
+        });
+
+        function applyPreviewFilter(filter) {
+             document.querySelectorAll('.photostrip-img').forEach(img => {
+                if (filter === 'vintage') {
+                    img.style.filter = 'sepia(0.7) contrast(1.1) brightness(0.9)';
+                } else if (filter === 'bw') {
+                    img.style.filter = 'grayscale(1)';
+                } else {
+                    img.style.filter = 'none';
+                }
+             });
+        }
+
+        // Generate the photostrips for on-screen preview
+        function generatePhotostripsPreview() {
+            const photostrip1Container = document.getElementById('photostrip1-container');
+            const photostrip2Container = document.getElementById('photostrip2-container');
+            
+            photostrip1Container.innerHTML = '';
+            photostrip2Container.innerHTML = '';
+            photostrip1Container.style.backgroundColor = selectedFrameColor;
+            photostrip2Container.style.backgroundColor = selectedFrameColor;
+
+            currentFilter = 'none';
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector('.filter-btn[data-filter="none"]').classList.add('active');
+
+            const strip1Photos = capturedPhotos.slice(0, 4);
+            strip1Photos.forEach(photoSrc => photostrip1Container.appendChild(createImageElement(photoSrc)));
+            photostrip1Container.appendChild(createLogoElement());
+
+            resultLayoutContainer.classList.remove('md:flex-row'); // Reset layout
+
+            if (totalPhotosInSession === 8) {
+                const strip2Photos = capturedPhotos.slice(4, 8);
+                strip2Photos.forEach(photoSrc => photostrip2Container.appendChild(createImageElement(photoSrc)));
+                photostrip2Container.appendChild(createLogoElement());
+                photostrip2Container.classList.remove('hidden');
+                downloadStrip2Button.classList.remove('hidden');
+                downloadAllButton.classList.remove('hidden');
+            } else {
+                resultLayoutContainer.classList.add('md:flex-row');
+                photostrip2Container.classList.add('hidden');
+                downloadStrip2Button.classList.add('hidden');
+                downloadAllButton.classList.add('hidden');
+            }
+            applyPreviewFilter('none');
+        }
+        
+        function createImageElement(src) {
+            const img = document.createElement('img');
+            img.src = src;
+            img.className = 'photostrip-img';
+            return img;
+        }
+        
+        function createLogoElement() {
+            const logoContainer = document.createElement('div');
+            logoContainer.className = 'text-center py-4 logo-container';
+            logoContainer.style.fontFamily = "'Pacifico', cursive";
+            logoContainer.style.fontSize = "24px";
+            logoContainer.style.color = (selectedFrameColor === 'black' || selectedFrameColor === '#8D021F') ? 'white' : 'black';
+            logoContainer.textContent = "sura sura";
+            return logoContainer;
+        }
+
+        // --- Download Logic ---
+        async function createStripCanvas(photos, frameColor, filter) {
+            const DPI = 300;
+            const INCH_TO_PX = DPI;
+            const STRIP_WIDTH_IN = 2;
+            const STRIP_HEIGHT_IN = 6;
+            
+            const canvas = document.createElement('canvas');
+            canvas.width = STRIP_WIDTH_IN * INCH_TO_PX;
+            canvas.height = STRIP_HEIGHT_IN * INCH_TO_PX;
+            const ctx = canvas.getContext('2d');
+
+            const FRAME_PADDING = 0.12 * INCH_TO_PX;
+            const PHOTO_SPACING = 0.08 * INCH_TO_PX;
+
+            ctx.fillStyle = frameColor;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const logoSpace = 0.8 * INCH_TO_PX;
+            const totalPhotoSpace = canvas.height - (FRAME_PADDING * 2) - logoSpace - (PHOTO_SPACING * (photos.length -1));
+            const photoHeight = totalPhotoSpace / photos.length;
+            const photoWidth = canvas.width - (FRAME_PADDING * 2);
+            let currentY = FRAME_PADDING;
+
+            const imagePromises = photos.map(src => new Promise(res => {
+                const img = new Image();
+                img.crossOrigin = "anonymous";
+                img.src = src;
+                img.onload = () => res(img);
+            }));
+            const loadedImages = await Promise.all(imagePromises);
+
+            for (const img of loadedImages) {
+                // Apply filter to a temporary canvas before drawing to the main one
+                const tempCanvas = document.createElement('canvas');
+                tempCanvas.width = img.width;
+                tempCanvas.height = img.height;
+                const tempCtx = tempCanvas.getContext('2d');
+                
+                if (filter === 'vintage') {
+                    tempCtx.filter = 'sepia(0.7) contrast(1.1) brightness(0.9)';
+                } else if (filter === 'bw') {
+                    tempCtx.filter = 'grayscale(1)';
+                } else {
+                    tempCtx.filter = 'none';
+                }
+                tempCtx.drawImage(img, 0, 0);
+
+                ctx.drawImage(tempCanvas, FRAME_PADDING, currentY, photoWidth, photoHeight);
+                currentY += photoHeight + PHOTO_SPACING;
+            }
+
+            ctx.font = `${0.3 * INCH_TO_PX}px 'Pacifico'`;
+            ctx.fillStyle = (frameColor === 'black' || frameColor === '#8D021F') ? 'white' : 'black';
+            ctx.textAlign = 'center';
+            ctx.fillText("sura sura", canvas.width / 2, canvas.height - FRAME_PADDING - (logoSpace / 4));
+
+            return canvas;
+        }
+
+        function downloadCanvas(canvas, filename) {
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        downloadStrip1Button.addEventListener('click', async () => {
+            const stripPhotos = capturedPhotos.slice(0, 4);
+            const canvas = await createStripCanvas(stripPhotos, selectedFrameColor, currentFilter);
+            downloadCanvas(canvas, 'sura-sura-strip1.png');
+        });
+        
+        downloadStrip2Button.addEventListener('click', async () => {
+            const stripPhotos = capturedPhotos.slice(4, 8);
+            const canvas = await createStripCanvas(stripPhotos, selectedFrameColor, currentFilter);
+            downloadCanvas(canvas, 'sura-sura-strip2.png');
+        });
+
+        downloadAllButton.addEventListener('click', async () => {
+            if (totalPhotosInSession !== 8) return;
+            const strip1Photos = capturedPhotos.slice(0, 4);
+            const strip2Photos = capturedPhotos.slice(4, 8);
+            
+            const canvas1 = await createStripCanvas(strip1Photos, selectedFrameColor, currentFilter);
+            const canvas2 = await createStripCanvas(strip2Photos, selectedFrameColor, currentFilter);
+
+            const combinedCanvas = document.createElement('canvas');
+            const ctx = combinedCanvas.getContext('2d');
+            const gap = 50;
+            combinedCanvas.width = canvas1.width * 2 + gap;
+            combinedCanvas.height = canvas1.height;
+            
+            ctx.fillStyle = 'rgba(255,255,255,0)';
+            ctx.fillRect(0,0, combinedCanvas.width, combinedCanvas.height);
+            ctx.drawImage(canvas1, 0, 0);
+            ctx.drawImage(canvas2, canvas1.width + gap, 0);
+
+            downloadCanvas(combinedCanvas, 'sura-sura-semua.png');
+        });
+        
+        retakeButton.addEventListener('click', () => {
+             resultScreen.classList.add('hidden');
+             sessionSelectionScreen.classList.remove('hidden');
+        });
+
+        changeFrameButton.addEventListener('click', () => {
+            resultScreen.classList.add('hidden');
+            frameSelectionScreen.classList.remove('hidden');
+        });
+        
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        
+        window.addEventListener('beforeunload', () => {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+        });
+
+    </script>
+</body>
+</html>
+<script>
+    // Ensure the video element is ready before starting the camera
+    video.addEventListener('loadedmetadata', async () => {
+        await initCamera();
+    });
