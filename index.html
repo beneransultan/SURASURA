@@ -589,12 +589,13 @@
       <svg id="music-on" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"></path></svg>
       <svg id="music-off" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M16.5 12a4.5 4.5 0 0 1-9 0a4.5 4.5 0 0 1 9 0zm-4.5 7a7 7 0 0 0 7-7h-2a5 5 0 0 1-10 0H3a7 7 0 0 0 7 7z"></path></svg>
     </button>
-    <audio id="bg-music" src="https://vgmsite.com/soundtracks/super-mario-bros.-ost-nes-gamerip/uwqjzqkq/01%20Title%20Screen.mp3" loop preload="auto"></audio>
-    <audio id="audio-coin" src="https://themushroomkingdom.net/sounds/wav/smb/smb_coin.wav" preload="auto"></audio>
-    <audio id="audio-jump" src="https://themushroomkingdom.net/sounds/wav/smb/smb_jump-small.wav" preload="auto"></audio>
-    <audio id="audio-powerup" src="https://themushroomkingdom.net/sounds/wav/smb/smb_powerup.wav" preload="auto"></audio>
-    <audio id="audio-start" src="https://themushroomkingdom.net/sounds/wav/smb/smb_game_start.wav" preload="auto"></audio>
-    <audio id="audio-win" src="https://themushroomkingdom.net/sounds/wav/smb/smb_stage_clear.wav" preload="auto"></audio>
+    <audio id="bg-music" src="audio/01_Title_Screen.mp3" loop preload="auto"></audio>
+    <audio id="audio-coin" src="audio/smb_coin.wav" preload="auto"></audio>
+    <audio id="audio-jump" src="audio/smb_jump-small.wav" preload="auto"></audio>
+    <audio id="audio-powerup" src="audio/smb_powerup.wav" preload="auto"></audio>
+    <audio id="audio-stomp" src="audio/smb_stomp.wav" preload="auto"></audio>
+    <audio id="audio-start" src="audio/smb_game_start.wav" preload="auto"></audio>
+    <audio id="audio-win" src="audio/smb_stage_clear.wav" preload="auto"></audio>
     
     <script>
         // DOM Elements
@@ -643,6 +644,7 @@
         const audioCoin = document.getElementById('audio-coin');
         const audioJump = document.getElementById('audio-jump');
         const audioPowerup = document.getElementById('audio-powerup');
+        const audioStomp = document.getElementById('audio-stomp');
         const bgMusic = document.getElementById('bg-music');
         const musicBtn = document.getElementById('music-toggle');
         const musicOn = document.getElementById('music-on');
@@ -675,6 +677,10 @@
         
         function playWinSound() {
             if(audioWin){ audioWin.currentTime = 0; audioWin.play(); }
+        }
+        
+        function playStompSound() {
+            if(audioStomp){ audioStomp.currentTime = 0; audioStomp.play(); }
         }
         
         // Music toggle logic
@@ -797,7 +803,7 @@
         // Start button leads to session selection
         startButton.addEventListener('click', async () => {
             initAudio(); 
-            playStartSound();
+            playPowerupSound();
             // Mulai musik langsung setelah klik START
             try {
                 bgMusic.muted = false;
@@ -812,7 +818,6 @@
             }
             const cameraReady = await initCamera();
             if (cameraReady) {
-                playCoinSound();
                 showScreen(sessionSelectionScreen);
             }
         });
@@ -944,6 +949,7 @@
         document.getElementById('review-gallery').addEventListener('click', (e) => {
             const button = e.target.closest('[data-retake-index]');
             if (button) {
+                playStompSound();
                 const retakeIndex = button.dataset.retakeIndex;
                 initiateRetake(parseInt(retakeIndex, 10));
             }
@@ -1258,6 +1264,18 @@
         window.addEventListener('beforeunload', () => {
             if (stream) {
                 stopCamera();
+            }
+        });
+
+        // Tambahkan efek stomp ke tombol filter
+        Array.from(document.querySelectorAll('.filter-btn')).forEach(btn => {
+            btn.addEventListener('click', playStompSound);
+        });
+
+        // Tambahkan efek stomp ke tombol pilih level dan tombol Let's-a-Go!
+        [oneStripButton, twoStripsButton, continueToFrameButton].forEach(btn => {
+            if (btn) {
+                btn.addEventListener('click', playStompSound);
             }
         });
 
