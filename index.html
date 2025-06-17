@@ -142,33 +142,61 @@
             transition: opacity 0.1s ease-out;
         }
         
+        /* --- UPGRADED: Mario Pixel 3D Frame Choice --- */
         .frame-choice {
-            width: 50px;
-            height: 50px;
-            border: 4px solid white;
+            width: 54px;
+            height: 54px;
+            border: 4px solid #222;
+            border-radius: 0; /* kotak pixel */
+            box-shadow:
+                0 6px #b59a3a, /* shadow bawah coklat */
+                0 0 0 4px #fff, /* highlight putih di sekeliling */
+                inset 0 4px #fbd000, /* highlight atas kuning */
+                inset 0 -4px #8F9779; /* shadow bawah hijau (atau warna lain sesuai tema) */
             cursor: pointer;
-            transition: transform 0.2s;
-            border-radius: 50%;
+            transition: transform 0.2s, box-shadow 0.2s;
+            background: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            image-rendering: pixelated;
+            outline: 2px solid #000; /* garis luar tebal */
+        }
+        .frame-choice::after {
+            content: "";
+            position: absolute;
+            left: 7px; top: 7px;
+            width: 8px; height: 8px;
+            background: rgba(255,255,255,0.5);
+            box-shadow: 0 0 0 2px #fff;
+            border-radius: 2px;
+            opacity: 0.7;
+            pointer-events: none;
         }
         .frame-choice:hover {
-            transform: scale(1.1) translateY(-5px);
+            transform: scale(1.08) translateY(-5px);
+            box-shadow:
+                0 2px #b59a3a,
+                0 0 0 4px #fff,
+                inset 0 4px #fbd000,
+                inset 0 -4px #8F9779;
         }
         
         input[type="color"] {
-            -webkit-appearance: none;
-            width: 50px;
-            height: 50px;
+            width: 54px;
+            height: 54px;
             border: none;
-            cursor: pointer;
-            padding: 0;
+            border-radius: 12px;
             background: none;
-        }
-        input[type="color"]::-webkit-color-swatch-wrapper {
             padding: 0;
         }
         input[type="color"]::-webkit-color-swatch {
-            border: 4px solid white;
-            border-radius: 50%;
+            border: 4px solid #222;
+            border-radius: 12px;
+        }
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
         }
         
         hr.mario-divider {
@@ -425,6 +453,76 @@
             margin-top: 3.5rem;
         }
 
+        .character-anim-container {
+            height: 90px;
+            width: 120px;
+            position: relative;
+            margin-bottom: 0px;
+            overflow: visible;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+        }
+        .level-pop-anim {
+            height: 90px;
+            width: auto;
+            position: absolute;
+            bottom: 39px;
+            left: 50%;
+            transform: translateX(-50%) translateY(30px) scale(1.15);
+            opacity: 0;
+            margin-bottom: 0;
+            animation: pop-up-char 0.7s cubic-bezier(0.68,-0.55,0.27,1.55) 0.3s forwards;
+        }
+        .character-anim-container:nth-child(1) .level-pop-anim {
+            animation-delay: 0.3s;
+        }
+        .character-anim-container:nth-child(2) .level-pop-anim {
+            animation-delay: 0.5s;
+        }
+        @keyframes pop-up-char {
+            0% {
+                opacity: 0;
+                transform: translateX(-50%) translateY(30px) scale(1.15);
+            }
+            60% {
+                opacity: 1;
+                transform: translateX(-50%) translateY(-8px) scale(1.22);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0) scale(1.15);
+            }
+        }
+
+        .group:hover .level-pop-anim {
+            animation: pop-up-char 0.7s cubic-bezier(0.68,-0.55,0.27,1.55) 0.3s forwards, char-hover-bounce 0.4s cubic-bezier(0.68,-0.55,0.27,1.55) 0s 1;
+            transform: translateX(-50%) translateY(-18px) scale(1.22);
+        }
+        @keyframes char-hover-bounce {
+            0% {
+                transform: translateX(-50%) translateY(0) scale(1.15);
+            }
+            60% {
+                transform: translateX(-50%) translateY(-22px) scale(1.28);
+            }
+            100% {
+                transform: translateX(-50%) translateY(-18px) scale(1.22);
+            }
+        }
+
+        /* Ikon ? untuk custom color */
+        .custom-color-choice .question-mark {
+            font-family: 'Press Start 2P', cursive;
+            color: #fff;
+            font-size: 2rem;
+            text-shadow: 2px 2px 0 #000, 0 0 8px #fbd000;
+            position: absolute;
+            left: 50%; top: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
     </style>
 </head>
 <body class="min-h-screen p-4 flex flex-col">
@@ -468,6 +566,9 @@
             </div>
             <div class="flex flex-row justify-center items-end gap-12 mb-8 mt-4 flex-1">
                 <div class="flex flex-col items-center group">
+                    <div class="character-anim-container">
+                        <img src="img/level1.png" class="level-pop-anim" alt="Mario" />
+                    </div>
                     <button id="one-strip-button" class="mario-button text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-xl mb-2">1-UP (4 FOTO)</button>
                     <!-- Strip Preview 1 -->
                     <div class="strip-preview mt-1 group-hover:scale-105 group-hover:-rotate-2 transition-transform duration-300">
@@ -481,6 +582,9 @@
                     <span class="text-xs mt-1 text-white/80">1 strip</span>
                 </div>
                 <div class="flex flex-col items-center group">
+                    <div class="character-anim-container">
+                        <img src="img/level2.png" class="level-pop-anim" alt="Luigi" />
+                    </div>
                     <button id="two-strips-button" class="mario-button text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-xl mb-2">2-UP (8 FOTO)</button>
                     <!-- Strip Preview 2 (horizontal) -->
                     <div class="strip-preview mt-1 group-hover:scale-105 group-hover:rotate-2 transition-transform duration-300 flex flex-row gap-2">
@@ -585,10 +689,6 @@
     </div>
     
     <!-- Music Button & Audio -->
-    <button class="music-btn fixed top-4 right-4 z-50 bg-yellow-400 border-4 border-black rounded-full p-2 shadow-lg hover:scale-105 transition-transform" id="music-toggle" title="Toggle Music">
-      <svg id="music-on" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"></path></svg>
-      <svg id="music-off" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M16.5 12a4.5 4.5 0 0 1-9 0a4.5 4.5 0 0 1 9 0zm-4.5 7a7 7 0 0 0 7-7h-2a5 5 0 0 1-10 0H3a7 7 0 0 0 7 7z"></path></svg>
-    </button>
     <audio id="bg-music" src="audio/01_Title_Screen.mp3" loop preload="auto"></audio>
     <audio id="audio-coin" src="audio/smb_coin.wav" preload="auto"></audio>
     <audio id="audio-jump" src="audio/smb_jump-small.wav" preload="auto"></audio>
@@ -646,9 +746,6 @@
         const audioPowerup = document.getElementById('audio-powerup');
         const audioStomp = document.getElementById('audio-stomp');
         const bgMusic = document.getElementById('bg-music');
-        const musicBtn = document.getElementById('music-toggle');
-        const musicOn = document.getElementById('music-on');
-        const musicOff = document.getElementById('music-off');
         let musicPlaying = false;
         const audioStart = document.getElementById('audio-start');
         const audioWin = document.getElementById('audio-win');
@@ -686,26 +783,6 @@
         function playStompSound() {
             if(audioStomp){ audioStomp.currentTime = 0; audioStomp.play(); }
         }
-        
-        // Music toggle logic
-        musicBtn.onclick = () => {
-            if (bgMusic.paused) {
-                bgMusic.play();
-                musicOn.style.display = 'inline';
-                musicOff.style.display = 'none';
-                musicPlaying = true;
-            } else {
-                bgMusic.pause();
-                musicOn.style.display = 'none';
-                musicOff.style.display = 'inline';
-                musicPlaying = false;
-            }
-        };
-        bgMusic.onended = () => {
-            musicPlaying = false;
-            musicOn.style.display = 'none';
-            musicOff.style.display = 'inline';
-        };
         
         // --- JS Animations ---
         function animateTitle() {
@@ -814,8 +891,6 @@
                 bgMusic.volume = 1.0;
                 bgMusic.currentTime = 0;
                 await bgMusic.play();
-                musicOn.style.display = 'inline';
-                musicOff.style.display = 'none';
                 musicPlaying = true;
             } catch (e) {
                 console.log('Gagal play musik:', e);
@@ -1018,8 +1093,8 @@
             pickerLabel.htmlFor = 'color-picker-input';
             pickerLabel.title = 'Pilih Warnamu';
             pickerLabel.innerHTML = `
-                <div class="frame-choice flex items-center justify-center cursor-pointer" style="background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red)">
-                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path><path d="M12 22.31V12"></path></svg>
+                <div class="frame-choice custom-color-choice flex items-center justify-center cursor-pointer" style="background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red)">
+                     <span class="question-mark">?</span>
                 </div>
             `;
             const pickerInput = document.createElement('input');
