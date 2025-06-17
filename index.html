@@ -660,7 +660,11 @@
         }
         
         function playCoinSound() {
-            if(audioCoin){ audioCoin.currentTime = 0; audioCoin.play(); }
+            if(audioCoin){
+                audioCoin.pause();
+                audioCoin.currentTime = 0;
+                audioCoin.play().catch(() => {});
+            }
         }
         
         function playJumpSound() {
