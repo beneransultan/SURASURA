@@ -9,6 +9,34 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Pacifico&display=swap" rel="stylesheet">
     <style>
+        @font-face {
+            font-family: 'Habita Scenic';
+            src: url('fonts/habita_scenic/HabitaScenic_PERSONAL_USE_ONLY.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Magic Retro';
+            src: url('fonts/magic_retro/Magic Retro.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Millgrove';
+            src: url('fonts/millgrove/Millgrove DEMO.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Blooming Bluster';
+            src: url('fonts/blooming-bluster-font/BloomingblusterdemoSolid-K7qEA.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
         body {
             font-family: 'Press Start 2P', cursive;
             background-color: #e70000; /* Mario Red Background */
@@ -103,9 +131,15 @@
         }
 
         .strip-logo {
-            font-family: 'Pacifico', cursive;
-            font-size: 24px;
-            text-shadow: 2px 2px 2px rgba(0,0,0,0.5);
+            font-family: 'Habita Scenic', serif;
+            font-size: 40px;
+            background: linear-gradient(90deg, #ffe066 0%, #ffb347 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 2px 2px 2px rgba(0,0,0,0.15);
+            transition: font-family 0.2s, background 0.2s, color 0.2s;
         }
 
         #countdown {
@@ -634,6 +668,25 @@
             </div>
             <div class="flex flex-col items-center justify-center flex-1 w-full">
                 <div id="frame-choices-container" class="relative flex flex-wrap justify-center items-center gap-6 mx-auto"></div>
+                <div class="flex flex-col md:flex-row gap-4 mt-8 items-center justify-center">
+                    <div>
+                        <label for="font-select" class="block mb-1 text-lg">Pilih Font:</label>
+                        <select id="font-select" class="mario-button text-base px-4 py-2 rounded-lg">
+                            <option value="Habita Scenic">Mario</option>
+                            <option value="Magic Retro">Luigi</option>
+                            <option value="Millgrove">Peach</option>
+                            <option value="Blooming Bluster">Yoshi</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="font-color-select" class="block mb-1 text-lg">Warna:</label>
+                        <select id="font-color-select" class="mario-button text-base px-4 py-2 rounded-lg">
+                            <option value="yellow">Kuning</option>
+                            <option value="black">Hitam</option>
+                            <option value="cream">Cream</option>
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -750,6 +803,11 @@
         const audioStart = document.getElementById('audio-start');
         const audioWin = document.getElementById('audio-win');
         
+        // Font & color state
+        let selectedFont = 'Habita Scenic';
+        let selectedFontLabel = 'Mario';
+        let selectedFontColor = 'gradient-yellow';
+
         function initAudio() {
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1174,6 +1232,7 @@
                 downloadAllButton.classList.add('hidden');
             }
             applyPreviewFilter('none');
+            updateStripLogoPreview();
         }
         
         function createImageContainer(src) {
@@ -1194,8 +1253,71 @@
             return logoContainer;
         }
 
+        // Update preview font & color
+        function updateStripLogoPreview() {
+            document.querySelectorAll('.strip-logo').forEach(el => {
+                el.style.fontFamily = `'${selectedFont}', serif`;
+                // Ukuran font khusus untuk Peach & Yoshi
+                if(selectedFont === 'Millgrove') {
+                    el.style.fontSize = '70px';
+                } else if(selectedFont === 'Blooming Bluster') {
+                    el.style.fontSize = '32px';
+                } else {
+                    el.style.fontSize = '40px';
+                }
+                el.style.textShadow = '2px 2px 2px rgba(0,0,0,0.15)';
+                // Warna gradasi
+                if(selectedFontColor === 'yellow') {
+                    el.style.background = 'linear-gradient(90deg, #ffe066 0%, #ffb347 100%)';
+                    el.style.color = 'transparent';
+                    el.style.backgroundClip = 'text';
+                    el.style.webkitBackgroundClip = 'text';
+                    el.style.webkitTextFillColor = 'transparent';
+                    el.style.boxShadow = 'none';
+                } else if(selectedFontColor === 'black') {
+                    el.style.background = 'linear-gradient(90deg, #444 0%, #111 100%)';
+                    el.style.color = 'transparent';
+                    el.style.backgroundClip = 'text';
+                    el.style.webkitBackgroundClip = 'text';
+                    el.style.webkitTextFillColor = 'transparent';
+                    el.style.boxShadow = 'none';
+                } else if(selectedFontColor === 'cream') {
+                    el.style.background = 'linear-gradient(90deg, #f5f5dc 0%, #b59a3a 100%)';
+                    el.style.color = 'transparent';
+                    el.style.backgroundClip = 'text';
+                    el.style.webkitBackgroundClip = 'text';
+                    el.style.webkitTextFillColor = 'transparent';
+                    el.style.boxShadow = 'none';
+                }
+                // Pastikan tidak ada background lain
+                el.style.backgroundColor = 'unset';
+            });
+        }
+
+        // Event listeners for font/color select
+        document.addEventListener('DOMContentLoaded', () => {
+            const fontSelect = document.getElementById('font-select');
+            const fontColorSelect = document.getElementById('font-color-select');
+            if(fontSelect) {
+                fontSelect.addEventListener('change', e => {
+                    selectedFont = e.target.value;
+                    updateStripLogoPreview();
+                });
+            }
+            if(fontColorSelect) {
+                fontColorSelect.addEventListener('change', e => {
+                    selectedFontColor = e.target.value;
+                    updateStripLogoPreview();
+                });
+            }
+        });
+
         // --- Download Logic ---
         async function createStripCanvas(photos, frameColor, filter) {
+            // Pastikan font sudah loaded sebelum menggambar canvas
+            if (document.fonts && document.fonts.load) {
+                await document.fonts.load(`32px "${selectedFont}"`);
+            }
             const DPI = 300;
             const INCH_TO_PX = DPI;
             const STRIP_WIDTH_IN = 2;
@@ -1270,10 +1392,33 @@
             }
 
             const logoText = "Sura Sura";
-            ctx.font = `${0.35 * INCH_TO_PX}px 'Pacifico'`;
+            // Ukuran font khusus untuk Peach & Yoshi
+            let logoFontSize = 0.5 * INCH_TO_PX;
+            if(selectedFont === 'Millgrove') {
+                logoFontSize = 0.85 * INCH_TO_PX;
+            } else if(selectedFont === 'Blooming Bluster') {
+                logoFontSize = 0.38 * INCH_TO_PX;
+            }
+            ctx.font = `${logoFontSize}px '${selectedFont}', serif`;
             ctx.textAlign = 'center';
-            ctx.fillStyle = isColorDark(frameColor) ? 'white' : 'black';
-            ctx.shadowColor = 'rgba(0,0,0,0.2)';
+            // Warna gradasi
+            if(selectedFontColor === 'yellow') {
+                const grad = ctx.createLinearGradient(canvas.width/2 - 80, 0, canvas.width/2 + 80, 0);
+                grad.addColorStop(0, '#ffe066');
+                grad.addColorStop(1, '#ffb347');
+                ctx.fillStyle = grad;
+            } else if(selectedFontColor === 'black') {
+                const grad = ctx.createLinearGradient(canvas.width/2 - 80, 0, canvas.width/2 + 80, 0);
+                grad.addColorStop(0, '#444');
+                grad.addColorStop(1, '#111');
+                ctx.fillStyle = grad;
+            } else if(selectedFontColor === 'cream') {
+                const grad = ctx.createLinearGradient(canvas.width/2 - 80, 0, canvas.width/2 + 80, 0);
+                grad.addColorStop(0, '#f5f5dc');
+                grad.addColorStop(1, '#b59a3a');
+                ctx.fillStyle = grad;
+            }
+            ctx.shadowColor = 'rgba(0,0,0,0.15)';
             ctx.shadowOffsetX = 2;
             ctx.shadowOffsetY = 2;
             ctx.shadowBlur = 3;
@@ -1355,7 +1500,7 @@
         [oneStripButton, twoStripsButton, continueToFrameButton].forEach(btn => {
             if (btn) {
                 btn.addEventListener('click', playStompSound);
-            }
+            } 
         });
 
     </script>
