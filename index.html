@@ -682,8 +682,11 @@
                         <label for="font-color-select" class="block mb-1 text-lg">Warna:</label>
                         <select id="font-color-select" class="mario-button text-base px-4 py-2 rounded-lg">
                             <option value="yellow">Kuning</option>
+                            <option value="white">Putih</option>
                             <option value="black">Hitam</option>
+                            <option value="red">Merah</option>
                             <option value="cream">Cream</option>
+                            <option value="gold">Emas</option>
                         </select>
                     </div>
                 </div>
@@ -1265,32 +1268,20 @@
                 } else {
                     el.style.fontSize = '40px';
                 }
-                el.style.textShadow = '2px 2px 2px rgba(0,0,0,0.15)';
-                // Warna gradasi
-                if(selectedFontColor === 'yellow') {
-                    el.style.background = 'linear-gradient(90deg, #ffe066 0%, #ffb347 100%)';
-                    el.style.color = 'transparent';
-                    el.style.backgroundClip = 'text';
-                    el.style.webkitBackgroundClip = 'text';
-                    el.style.webkitTextFillColor = 'transparent';
-                    el.style.boxShadow = 'none';
-                } else if(selectedFontColor === 'black') {
-                    el.style.background = 'linear-gradient(90deg, #444 0%, #111 100%)';
-                    el.style.color = 'transparent';
-                    el.style.backgroundClip = 'text';
-                    el.style.webkitBackgroundClip = 'text';
-                    el.style.webkitTextFillColor = 'transparent';
-                    el.style.boxShadow = 'none';
-                } else if(selectedFontColor === 'cream') {
-                    el.style.background = 'linear-gradient(90deg, #f5f5dc 0%, #b59a3a 100%)';
-                    el.style.color = 'transparent';
-                    el.style.backgroundClip = 'text';
-                    el.style.webkitBackgroundClip = 'text';
-                    el.style.webkitTextFillColor = 'transparent';
-                    el.style.boxShadow = 'none';
-                }
-                // Pastikan tidak ada background lain
-                el.style.backgroundColor = 'unset';
+                el.style.textShadow = '4px 4px 12px rgba(0,0,0,0.35), 2px 2px 2px rgba(0,0,0,0.25)';
+                // Warna solid
+                let color = '#ffe066';
+                if(selectedFontColor === 'yellow') color = '#ffe066';
+                else if(selectedFontColor === 'white') color = '#fff';
+                else if(selectedFontColor === 'black') color = '#111';
+                else if(selectedFontColor === 'red') color = '#e70000';
+                else if(selectedFontColor === 'cream') color = '#f5f5dc';
+                else if(selectedFontColor === 'gold') color = '#FFD700';
+                el.style.background = 'none';
+                el.style.color = color;
+                el.style.webkitTextFillColor = color;
+                el.style.backgroundClip = 'border-box';
+                el.style.webkitBackgroundClip = 'border-box';
             });
         }
 
@@ -1401,27 +1392,19 @@
             }
             ctx.font = `${logoFontSize}px '${selectedFont}', serif`;
             ctx.textAlign = 'center';
-            // Warna gradasi
-            if(selectedFontColor === 'yellow') {
-                const grad = ctx.createLinearGradient(canvas.width/2 - 80, 0, canvas.width/2 + 80, 0);
-                grad.addColorStop(0, '#ffe066');
-                grad.addColorStop(1, '#ffb347');
-                ctx.fillStyle = grad;
-            } else if(selectedFontColor === 'black') {
-                const grad = ctx.createLinearGradient(canvas.width/2 - 80, 0, canvas.width/2 + 80, 0);
-                grad.addColorStop(0, '#444');
-                grad.addColorStop(1, '#111');
-                ctx.fillStyle = grad;
-            } else if(selectedFontColor === 'cream') {
-                const grad = ctx.createLinearGradient(canvas.width/2 - 80, 0, canvas.width/2 + 80, 0);
-                grad.addColorStop(0, '#f5f5dc');
-                grad.addColorStop(1, '#b59a3a');
-                ctx.fillStyle = grad;
-            }
-            ctx.shadowColor = 'rgba(0,0,0,0.15)';
-            ctx.shadowOffsetX = 2;
-            ctx.shadowOffsetY = 2;
-            ctx.shadowBlur = 3;
+            // Warna solid
+            let color = '#ffe066';
+            if(selectedFontColor === 'yellow') color = '#ffe066';
+            else if(selectedFontColor === 'white') color = '#fff';
+            else if(selectedFontColor === 'black') color = '#111';
+            else if(selectedFontColor === 'red') color = '#e70000';
+            else if(selectedFontColor === 'cream') color = '#f5f5dc';
+            else if(selectedFontColor === 'gold') color = '#FFD700';
+            ctx.fillStyle = color;
+            ctx.shadowColor = 'rgba(0,0,0,0.35)';
+            ctx.shadowOffsetX = 4;
+            ctx.shadowOffsetY = 4;
+            ctx.shadowBlur = 12;
             ctx.fillText(logoText, canvas.width / 2, canvas.height - FRAME_PADDING - (logoSpace / 4));
 
             return canvas;
