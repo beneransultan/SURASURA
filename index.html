@@ -1260,13 +1260,18 @@
         function updateStripLogoPreview() {
             document.querySelectorAll('.strip-logo').forEach(el => {
                 el.style.fontFamily = `'${selectedFont}', serif`;
-                // Ukuran font khusus untuk Peach & Yoshi
+                // Ukuran font khusus untuk Peach & Yoshi & Luigi
                 if(selectedFont === 'Millgrove') {
-                    el.style.fontSize = '70px';
+                    // Peach: lebih kecil, responsif
+                    el.style.fontSize = 'clamp(22px, 4vw, 36px)';
+                } else if(selectedFont === 'Magic Retro') {
+                    // Luigi: lebih kecil, responsif
+                    el.style.fontSize = 'clamp(22px, 4vw, 36px)';
                 } else if(selectedFont === 'Blooming Bluster') {
-                    el.style.fontSize = '32px';
+                    el.style.fontSize = 'clamp(18px, 3vw, 28px)';
                 } else {
-                    el.style.fontSize = '40px';
+                    // Mario (default)
+                    el.style.fontSize = 'clamp(24px, 4vw, 40px)';
                 }
                 el.style.textShadow = '4px 4px 12px rgba(0,0,0,0.35), 2px 2px 2px rgba(0,0,0,0.25)';
                 // Warna solid
@@ -1383,12 +1388,12 @@
             }
 
             const logoText = "Sura Sura";
-            // Ukuran font khusus untuk Peach & Yoshi
+            // Ukuran font khusus untuk Peach & Luigi
             let logoFontSize = 0.5 * INCH_TO_PX;
-            if(selectedFont === 'Millgrove') {
-                logoFontSize = 0.85 * INCH_TO_PX;
+            if(selectedFont === 'Millgrove' || selectedFont === 'Magic Retro') {
+                logoFontSize = 0.36 * INCH_TO_PX; // Peach & Luigi lebih kecil
             } else if(selectedFont === 'Blooming Bluster') {
-                logoFontSize = 0.38 * INCH_TO_PX;
+                logoFontSize = 0.32 * INCH_TO_PX;
             }
             ctx.font = `${logoFontSize}px '${selectedFont}', serif`;
             ctx.textAlign = 'center';
