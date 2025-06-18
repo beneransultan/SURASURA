@@ -1313,9 +1313,19 @@
 
         // --- Download Logic ---
         async function createStripCanvas(photos, frameColor, filter) {
-            // Pastikan font sudah loaded sebelum menggambar canvas
+            // Pastikan font sudah loaded sebelum menggambar canvas, dengan timeout 2 detik
+            let fontLoaded = false;
             if (document.fonts && document.fonts.load) {
-                await document.fonts.load(`32px "${selectedFont}"`);
+                try {
+                    await Promise.race([
+                        document.fonts.load(`32px "${selectedFont}"`),
+                        new Promise((_, reject) => setTimeout(() => reject(new Error('Font load timeout')), 2000))
+                    ]);
+                    await document.fonts.ready;
+                    fontLoaded = true;
+                } catch (e) {
+                    fontLoaded = false;
+                }
             }
             const DPI = 300;
             const INCH_TO_PX = DPI;
@@ -1400,7 +1410,9 @@
             } else if(selectedFont === 'Blooming Bluster') {
                 logoFontSize = canvas.width * 0.145;
             }
-            ctx.font = `${logoFontSize}px '${selectedFont}', serif`;
+            // Fallback font jika gagal load
+            let fontFamily = fontLoaded ? `'${selectedFont}', serif` : 'serif';
+            ctx.font = `${logoFontSize}px ${fontFamily}`;
             ctx.textAlign = 'center';
             // Warna solid
             let color = '#ffe066';
@@ -1415,8 +1427,18 @@
             ctx.shadowOffsetX = 4;
             ctx.shadowOffsetY = 4;
             ctx.shadowBlur = 12;
-            // Posisi logo sedikit naik agar tidak crop
-            ctx.fillText(logoText, canvas.width / 2, canvas.height - FRAME_PADDING - (logoFontSize * 0.2));
+            // Posisi logo dinaikkan 1cm (118px)
+            ctx.fillText(logoText, canvas.width / 2, canvas.height - FRAME_PADDING - (logoFontSize * 0.2) - 59);
+
+            // Jika font gagal load, tampilkan warning kecil di pojok bawah
+            if (!fontLoaded) {
+                ctx.font = 'bold 24px serif';
+                ctx.fillStyle = 'red';
+                ctx.shadowColor = 'white';
+                ctx.shadowBlur = 0;
+                ctx.textAlign = 'right';
+                ctx.fillText('Font gagal load', canvas.width - 10, canvas.height - 10);
+            }
 
             return canvas;
         }
