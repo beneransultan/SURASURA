@@ -1391,12 +1391,14 @@
             }
 
             const logoText = "Sura Sura";
-            // Ukuran font khusus untuk Peach & Yoshi
-            let logoFontSize = 0.5 * INCH_TO_PX;
+            // Samakan proporsi font dengan preview (sekitar 20% dari lebar strip)
+            let logoFontSize = canvas.width * 0.20;
             if(selectedFont === 'Millgrove') {
-                logoFontSize = 0.85 * INCH_TO_PX;
+                logoFontSize = canvas.width * 0.30;
+            } else if(selectedFont === 'Magic Retro') {
+                logoFontSize = canvas.width * 0.16;
             } else if(selectedFont === 'Blooming Bluster') {
-                logoFontSize = 0.38 * INCH_TO_PX;
+                logoFontSize = canvas.width * 0.145;
             }
             ctx.font = `${logoFontSize}px '${selectedFont}', serif`;
             ctx.textAlign = 'center';
@@ -1413,7 +1415,8 @@
             ctx.shadowOffsetX = 4;
             ctx.shadowOffsetY = 4;
             ctx.shadowBlur = 12;
-            ctx.fillText(logoText, canvas.width / 2, canvas.height - FRAME_PADDING - (logoSpace / 4));
+            // Posisi logo sedikit naik agar tidak crop
+            ctx.fillText(logoText, canvas.width / 2, canvas.height - FRAME_PADDING - (logoFontSize * 0.2));
 
             return canvas;
         }
