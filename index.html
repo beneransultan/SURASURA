@@ -1260,14 +1260,22 @@
         function updateStripLogoPreview() {
             document.querySelectorAll('.strip-logo').forEach(el => {
                 el.style.fontFamily = `'${selectedFont}', serif`;
-                // Ukuran font khusus untuk Peach & Yoshi
-                if(selectedFont === 'Millgrove') {
-                    el.style.fontSize = '70px';
-                } else if(selectedFont === 'Blooming Bluster') {
-                    el.style.fontSize = '32px';
-                } else {
-                    el.style.fontSize = '40px';
+                // Find the closest photostrip container
+                const container = el.closest('.photostrip');
+                let containerWidth = 200; // fallback default
+                if (container) {
+                    containerWidth = container.offsetWidth;
                 }
+                // Set font size as a percentage of container width
+                let fontSize = containerWidth * 0.20; // 20% default
+                if(selectedFont === 'Millgrove') {
+                    fontSize = containerWidth * 0.30; // 30% untuk Peach
+                } else if(selectedFont === 'Magic Retro') {
+                    fontSize = containerWidth * 0.16; // 16% untuk Luigi
+                } else if(selectedFont === 'Blooming Bluster') {
+                    fontSize = containerWidth * 0.145; // 14.5% untuk Yoshi
+                }
+                el.style.fontSize = fontSize + 'px';
                 el.style.textShadow = '4px 4px 12px rgba(0,0,0,0.35), 2px 2px 2px rgba(0,0,0,0.25)';
                 // Warna solid
                 let color = '#ffe066';
