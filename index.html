@@ -11,40 +11,28 @@
     <style>
         @font-face {
             font-family: 'Habita Scenic';
-            src: url('fonts/habita_scenic/HabitaScenic_PERSONAL_USE_ONLY.woff2') format('woff2'),
-                 url('fonts/habita_scenic/HabitaScenic_PERSONAL_USE_ONLY.woff') format('woff'),
-                 url('fonts/habita_scenic/HabitaScenic_PERSONAL_USE_ONLY.ttf') format('truetype'),
-                 url('fonts/habita_scenic/HabitaScenic_PERSONAL_USE_ONLY.otf') format('opentype');
+            src: url('fonts/habita_scenic/HabitaScenic_PERSONAL_USE_ONLY.otf') format('opentype');
             font-weight: normal;
             font-style: normal;
             font-display: swap;
         }
         @font-face {
             font-family: 'Magic Retro';
-            src: url('fonts/magic_retro/Magic Retro.woff2') format('woff2'),
-                 url('fonts/magic_retro/Magic Retro.woff') format('woff'),
-                 url('fonts/magic_retro/Magic Retro.ttf') format('truetype'),
-                 url('fonts/magic_retro/Magic Retro.otf') format('opentype');
+            src: url('fonts/magic_retro/Magic Retro.ttf') format('truetype');
             font-weight: normal;
             font-style: normal;
             font-display: swap;
         }
         @font-face {
             font-family: 'Millgrove';
-            src: url('fonts/millgrove/Millgrove DEMO.woff2') format('woff2'),
-                 url('fonts/millgrove/Millgrove DEMO.woff') format('woff'),
-                 url('fonts/millgrove/Millgrove DEMO.ttf') format('truetype'),
-                 url('fonts/millgrove/Millgrove DEMO.otf') format('opentype');
+            src: url('fonts/millgrove/Millgrove DEMO.otf') format('opentype');
             font-weight: normal;
             font-style: normal;
             font-display: swap;
         }
         @font-face {
             font-family: 'Blooming Bluster';
-            src: url('fonts/blooming-bluster-font/BloomingblusterdemoSolid-K7qEA.woff2') format('woff2'),
-                 url('fonts/blooming-bluster-font/BloomingblusterdemoSolid-K7qEA.woff') format('woff'),
-                 url('fonts/blooming-bluster-font/BloomingblusterdemoSolid-K7qEA.ttf') format('truetype'),
-                 url('fonts/blooming-bluster-font/BloomingblusterdemoSolid-K7qEA.otf') format('opentype');
+            src: url('fonts/blooming-bluster-font/BloomingblusterdemoSolid-K7qEA.otf') format('opentype');
             font-weight: normal;
             font-style: normal;
             font-display: swap;
@@ -1325,19 +1313,9 @@
 
         // --- Download Logic ---
         async function createStripCanvas(photos, frameColor, filter) {
-            // Pastikan font sudah loaded sebelum menggambar canvas, dengan timeout 2 detik
-            let fontLoaded = false;
+            // Pastikan font sudah loaded sebelum menggambar canvas
             if (document.fonts && document.fonts.load) {
-                try {
-                    await Promise.race([
-                        document.fonts.load(`32px "${selectedFont}"`),
-                        new Promise((_, reject) => setTimeout(() => reject(new Error('Font load timeout')), 2000))
-                    ]);
-                    await document.fonts.ready;
-                    fontLoaded = true;
-                } catch (e) {
-                    fontLoaded = false;
-                }
+                await document.fonts.load(`32px "${selectedFont}"`);
             }
             const DPI = 300;
             const INCH_TO_PX = DPI;
@@ -1413,18 +1391,14 @@
             }
 
             const logoText = "Sura Sura";
-            // Samakan proporsi font dengan preview (sekitar 20% dari lebar strip)
-            let logoFontSize = canvas.width * 0.20;
+            // Ukuran font khusus untuk Peach & Yoshi
+            let logoFontSize = 0.5 * INCH_TO_PX;
             if(selectedFont === 'Millgrove') {
-                logoFontSize = canvas.width * 0.30;
-            } else if(selectedFont === 'Magic Retro') {
-                logoFontSize = canvas.width * 0.16;
+                logoFontSize = 0.85 * INCH_TO_PX;
             } else if(selectedFont === 'Blooming Bluster') {
-                logoFontSize = canvas.width * 0.145;
+                logoFontSize = 0.38 * INCH_TO_PX;
             }
-            // Fallback font jika gagal load
-            let fontFamily = fontLoaded ? `'${selectedFont}', serif` : 'serif';
-            ctx.font = `${logoFontSize}px ${fontFamily}`;
+            ctx.font = `${logoFontSize}px '${selectedFont}', serif`;
             ctx.textAlign = 'center';
             // Warna solid
             let color = '#ffe066';
@@ -1439,18 +1413,7 @@
             ctx.shadowOffsetX = 4;
             ctx.shadowOffsetY = 4;
             ctx.shadowBlur = 12;
-            // Posisi logo dinaikkan 1cm (118px)
-            ctx.fillText(logoText, canvas.width / 2, canvas.height - FRAME_PADDING - (logoFontSize * 0.2) - 118);
-
-            // Jika font gagal load, tampilkan warning kecil di pojok bawah
-            if (!fontLoaded) {
-                ctx.font = 'bold 24px serif';
-                ctx.fillStyle = 'red';
-                ctx.shadowColor = 'white';
-                ctx.shadowBlur = 0;
-                ctx.textAlign = 'right';
-                ctx.fillText('Font gagal load', canvas.width - 10, canvas.height - 10);
-            }
+            ctx.fillText(logoText, canvas.width / 2, canvas.height - FRAME_PADDING - (logoSpace / 4));
 
             return canvas;
         }
