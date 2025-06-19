@@ -11,28 +11,40 @@
     <style>
         @font-face {
             font-family: 'Habita Scenic';
-            src: url('fonts/habita_scenic/HabitaScenic_PERSONAL_USE_ONLY.otf') format('opentype');
+            src: url('fonts/habita_scenic/HabitaScenic_PERSONAL_USE_ONLY.woff2') format('woff2'),
+                 url('fonts/habita_scenic/HabitaScenic_PERSONAL_USE_ONLY.woff') format('woff'),
+                 url('fonts/habita_scenic/HabitaScenic_PERSONAL_USE_ONLY.ttf') format('truetype'),
+                 url('fonts/habita_scenic/HabitaScenic_PERSONAL_USE_ONLY.otf') format('opentype');
             font-weight: normal;
             font-style: normal;
             font-display: swap;
         }
         @font-face {
             font-family: 'Magic Retro';
-            src: url('fonts/magic_retro/Magic Retro.ttf') format('truetype');
+            src: url('fonts/magic_retro/Magic Retro.woff2') format('woff2'),
+                 url('fonts/magic_retro/Magic Retro.woff') format('woff'),
+                 url('fonts/magic_retro/Magic Retro.ttf') format('truetype'),
+                 url('fonts/magic_retro/Magic Retro.otf') format('opentype');
             font-weight: normal;
             font-style: normal;
             font-display: swap;
         }
         @font-face {
             font-family: 'Millgrove';
-            src: url('fonts/millgrove/Millgrove DEMO.otf') format('opentype');
+            src: url('fonts/millgrove/Millgrove DEMO.woff2') format('woff2'),
+                 url('fonts/millgrove/Millgrove DEMO.woff') format('woff'),
+                 url('fonts/millgrove/Millgrove DEMO.ttf') format('truetype'),
+                 url('fonts/millgrove/Millgrove DEMO.otf') format('opentype');
             font-weight: normal;
             font-style: normal;
             font-display: swap;
         }
         @font-face {
             font-family: 'Blooming Bluster';
-            src: url('fonts/blooming-bluster-font/BloomingblusterdemoSolid-K7qEA.otf') format('opentype');
+            src: url('fonts/blooming-bluster-font/BloomingblusterdemoSolid-K7qEA.woff2') format('woff2'),
+                 url('fonts/blooming-bluster-font/BloomingblusterdemoSolid-K7qEA.woff') format('woff'),
+                 url('fonts/blooming-bluster-font/BloomingblusterdemoSolid-K7qEA.ttf') format('truetype'),
+                 url('fonts/blooming-bluster-font/BloomingblusterdemoSolid-K7qEA.otf') format('opentype');
             font-weight: normal;
             font-style: normal;
             font-display: swap;
@@ -1428,7 +1440,7 @@
             ctx.shadowOffsetY = 4;
             ctx.shadowBlur = 12;
             // Posisi logo dinaikkan 1cm (118px)
-            ctx.fillText(logoText, canvas.width / 2, canvas.height - FRAME_PADDING - (logoFontSize * 0.2) - 59);
+            ctx.fillText(logoText, canvas.width / 2, canvas.height - FRAME_PADDING - (logoFontSize * 0.2) - 118);
 
             // Jika font gagal load, tampilkan warning kecil di pojok bawah
             if (!fontLoaded) {
